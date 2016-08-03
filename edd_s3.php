@@ -181,8 +181,13 @@ class EDD_Amazon_S3 {
 		// add some javascript to the admin
 		add_action( 'admin_head', array( $this, 'admin_js' ) );
 
+		// FES stuff
 		add_filter( 'fes_validate_multiple_pricing_field_files', array( $this, 'valid_url' ), 10, 2 );
 		add_filter( 'fes_pre_files_save', array( $this, 'send_fes_files_to_s3' ), 10, 2 );
+
+		// CFM stuff
+		add_filter( 'cfm_validate_filter_url_file_upload_field', array( $this, 'valid_url' ), 10, 2 );
+		add_filter( 'cfm_save_field_admin_file_upload_field_attachment_id', array( $this, 'send_cfm_files_to_s3' ), 10, 2 );
 
 		add_action( 'admin_notices', array( $this, 'show_admin_notices' ), 10 );
 
@@ -200,7 +205,7 @@ class EDD_Amazon_S3 {
 
 	public function s3_tabs( $tabs ) {
 
-		if ( ! wp_script_is( 'fes_form', 'enqueued' ) ) {
+		if ( ! wp_script_is( 'fes_form', 'enqueued' ) && ! wp_script_is( 'cfm_form', 'enqueued' ) ) {
 
 			$tabs['s3']         = __( 'Upload to Amazon S3', 'edd_s3' );
 			$tabs['s3_library'] = __( 'Amazon S3 Library', 'edd_s3' );
@@ -709,7 +714,7 @@ class EDD_Amazon_S3 {
 		return $settings;
 	}
 
-	public function api_keys_entered() {
+	public function api_keys_entered() {f
 
 		$id  = edd_get_option( 'edd_amazon_s3_id' );
 		$key = edd_get_option( 'edd_amazon_s3_key' );
@@ -722,7 +727,7 @@ class EDD_Amazon_S3 {
 	}
 
 	/**
-	 * Tells FES that Amazon S3 URLs are valid
+	 * Tells FES/CFM that Amazon S3 URLs are valid
 	 *
 	 * @since 2.2.2
 	 *
@@ -738,7 +743,6 @@ class EDD_Amazon_S3 {
 
 		return $valid;
 	}
-
 
 	/**
 	 * Uploads files to Amazon S3 during FES form submissions
@@ -787,6 +791,32 @@ class EDD_Amazon_S3 {
 		return $files;
 
 	}
+
+	/**
+	 * Uploads files to Amazon S3 during CFM form submissions
+	 *
+	 * Only runs if Checkout Fields Manager is active
+	 *
+	 * @since 2.2.3
+	 *
+	 * @access public
+	 * @return array
+	 */
+	public function send_cfm_files_to_s3( $attachment_id = 0, $url = '' ) {
+		$folder = trailingslashit( 'cfm' );
+		$args   = array(
+			'file' => get_attached_file( $attachment_id, false ),
+			'name' => $folder . basename( get_attached_file( $attachment_id ) ),
+			'type' => get_post_mime_type( $attachment_id )
+		);
+
+		$this->upload_file( $args );
+
+		$new_url = edd_get_option( 'edd_amazon_s3_bucket' ) . '/' . $folder . basename( $url );
+		wp_delete_attachment( $attachment_id, true );
+		return $new_url;
+	}	
+	
 }
 
 function edd_s3_load() {
