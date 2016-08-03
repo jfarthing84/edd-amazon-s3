@@ -714,7 +714,7 @@ class EDD_Amazon_S3 {
 		return $settings;
 	}
 
-	public function api_keys_entered() {f
+	public function api_keys_entered() {
 
 		$id  = edd_get_option( 'edd_amazon_s3_id' );
 		$key = edd_get_option( 'edd_amazon_s3_key' );
