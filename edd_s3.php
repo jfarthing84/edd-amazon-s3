@@ -188,7 +188,8 @@ class EDD_Amazon_S3 {
 		// CFM stuff
 		add_filter( 'cfm_validate_filter_url_file_upload_field', array( $this, 'valid_url' ), 10, 2 );
 		add_filter( 'cfm_save_field_admin_file_upload_field_attachment_id', array( $this, 'send_cfm_files_to_s3' ), 10, 2 );
-
+		add_filter( 'cfm_save_field_frontend_file_upload_field_attachment_id', array( $this, 'send_cfm_files_to_s3' ), 10, 2 );
+		
 		add_action( 'admin_notices', array( $this, 'show_admin_notices' ), 10 );
 
 	}
