@@ -189,8 +189,11 @@ class EDD_Amazon_S3 {
 		add_filter( 'cfm_validate_filter_url_file_upload_field', array( $this, 'valid_url' ), 10, 2 );
 		add_filter( 'cfm_save_field_admin_file_upload_field_attachment_id', array( $this, 'send_cfm_files_to_s3' ), 10, 2 );
 		add_filter( 'cfm_save_field_frontend_file_upload_field_attachment_id', array( $this, 'send_cfm_files_to_s3' ), 10, 2 );
-		
+
 		add_action( 'admin_notices', array( $this, 'show_admin_notices' ), 10 );
+
+		// Create download links for the CFM uploads
+		add_filter( 'eddcfm_file_download_url', array( $this, 'file_download_url' ), 10, 1 );
 
 	}
 
@@ -641,8 +644,8 @@ class EDD_Amazon_S3 {
 
 			$file_name = $files[ $file_id ]['file'];
 
-			// Check whether thsi is an Amazon S3 file or not
-			if( ( '/' !== $file_name[0] && strpos( $file_name, 'http://' ) === false && strpos( $file_name, 'https://' ) === false && strpos( $file_name, 'ftp://' ) === false ) || false !== ( strpos( $file_name, 'AWSAccessKeyId' ) ) ) {
+			// Check whether this is an Amazon S3 file or not
+			if( $this->is_s3_file( $file_name ) ) {
 
 				$ret = true;
 
@@ -651,6 +654,17 @@ class EDD_Amazon_S3 {
 		}
 
 		return $ret;
+	}
+
+	/**
+	 * Determine if the file provided matches the S3 pattern
+	 *
+	 * @since  2.2.3
+	 * @param  string  $file_name The Filename to verify
+	 * @return boolean            If the file passed is an S3 file or a local/url
+	 */
+	public function is_s3_file( $file_name ) {
+		return ( '/' !== $file_name[0] && strpos( $file_name, 'http://' ) === false && strpos( $file_name, 'https://' ) === false && strpos( $file_name, 'ftp://' ) === false ) || false !== ( strpos( $file_name, 'AWSAccessKeyId' ) );
 	}
 
 	public function cleanup_filename($old_file_name) {
@@ -739,7 +753,7 @@ class EDD_Amazon_S3 {
 
 		if( ! $valid && is_string( $value ) ) {
 			$ext   = edd_get_file_extension( $value );
-			$valid = ! empty( $ext ); 
+			$valid = ! empty( $ext );
 		}
 
 		return $valid;
@@ -816,8 +830,25 @@ class EDD_Amazon_S3 {
 		$new_url = edd_get_option( 'edd_amazon_s3_bucket' ) . '/' . $folder . basename( $url );
 		wp_delete_attachment( $attachment_id, true );
 		return $new_url;
-	}	
-	
+	}
+
+	/**
+	 * Given a URL for CFM, we need to determine if it's an S3 URL or a normal url
+	 *
+	 * @since  2.2.3
+	 * @param  string $url The URL to the file
+	 * @return string      If it's an S3 URL, the full URL to S3, otherwise it passes the provided value
+	 */
+	public function file_download_url( $url ) {
+
+		if ( $this->is_s3_file( $url ) ) {
+			$url = $this->get_s3_url( $url );
+		}
+
+		return $url;
+
+	}
+
 }
 
 function edd_s3_load() {
