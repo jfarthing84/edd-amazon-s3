@@ -193,7 +193,7 @@ class EDD_Amazon_S3 {
 		add_action( 'admin_notices', array( $this, 'show_admin_notices' ), 10 );
 
 		// Create download links for the CFM uploads
-		add_filter( 'eddcfm_file_download_url', array( $this, 'file_download_url' ), 10, 1 );
+		add_filter( 'cfm_file_download_url', array( $this, 'file_download_url' ), 10, 1 );
 
 	}
 
