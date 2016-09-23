@@ -688,7 +688,7 @@ class EDD_Amazon_S3 {
 		$settings[] = array(
 					'id'   => 'edd_amazon_s3_id',
 					'name' => __( 'Amazon S3 Access Key ID', 'edd_s3' ),
-					'desc' => __( 'After logging into your S3 account, click on "Security Credentials" in the sidebar.  Scroll down to "Access Credentials" and you will see your Access Key ID.  Copy and paste it here.', 'edd_s3' ),
+					'desc' => __( 'Enter your IAM user&#39;s Access Key ID. See our <a href="http://docs.easydigitaldownloads.com/article/393-amazon-s3-documentation">documentation for assistance</a>.', 'edd_s3' ),
 					'type' => 'text',
 					'size' => 'regular'
 		);
@@ -696,7 +696,7 @@ class EDD_Amazon_S3 {
 		$settings[] = array(
 					'id'   => 'edd_amazon_s3_key',
 					'name' => __( 'Amazon S3 Secret Key', 'edd_s3' ),
-					'desc' => __( 'In the same Access Credentials area, your "Secret Key" will be hidden.  You will need to click the "Show" link to see it.  Copy and paste it here.', 'edd_s3' ),
+					'desc' => __( 'Enter your IAM user&#39;s Secret Key. See our <a href="http://docs.easydigitaldownloads.com/article/393-amazon-s3-documentation">documentation for assistance</a>.', 'edd_s3' ),
 					'type' => 'text',
 					'size' => 'regular'
 		);
