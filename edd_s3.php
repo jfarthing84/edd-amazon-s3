@@ -163,7 +163,8 @@ class EDD_Amazon_S3 {
 		add_action( 'media_upload_s3'         , array( $this, 's3_upload_iframe' ) );
 		add_action( 'media_upload_s3_library' , array( $this, 's3_library_iframe' ) );
 
-		//Adds settings to Misc Tab
+		// Adds settings to Extensions Tab
+		add_filter( 'edd_settings_sections_extensions',  array( $this, 'settings_section' ) );
 		add_filter( 'edd_settings_extensions' , array( $this, 'add_settings' ) );
 
 		//Handles Uploading to S3
@@ -676,16 +677,31 @@ class EDD_Amazon_S3 {
 		return $old_file_name;
 	}
 
+	/**
+	 * Registers the subsection for EDD Settings
+	 *
+	 * @since   2.2.4
+	 * @param  array $sections The sections
+	 * @return array           Sections with commissions added
+	 */
+	public function settings_section( $sections ) {
+		$sections['amazon_s3'] = __( 'Amazon S3', 'eddc' );
+		return $sections;
+	}
+
+
 	public function add_settings( $settings ) {
 
-		$settings[] = array(
+		$s3_settings = array();
+
+		$s3_settings[] = array(
 					'id'   => 'amazon_s3_settings',
 					'name' => __( '<strong>Amazon S3 Settings</strong>', 'edd_s3' ),
 					'desc' => '',
 					'type' => 'header'
 		);
 
-		$settings[] = array(
+		$s3_settings[] = array(
 					'id'   => 'edd_amazon_s3_id',
 					'name' => __( 'Amazon S3 Access Key ID', 'edd_s3' ),
 					'desc' => __( 'Enter your IAM user&#39;s Access Key ID. See our <a href="http://docs.easydigitaldownloads.com/article/393-amazon-s3-documentation">documentation for assistance</a>.', 'edd_s3' ),
@@ -693,7 +709,7 @@ class EDD_Amazon_S3 {
 					'size' => 'regular'
 		);
 
-		$settings[] = array(
+		$s3_settings[] = array(
 					'id'   => 'edd_amazon_s3_key',
 					'name' => __( 'Amazon S3 Secret Key', 'edd_s3' ),
 					'desc' => __( 'Enter your IAM user&#39;s Secret Key. See our <a href="http://docs.easydigitaldownloads.com/article/393-amazon-s3-documentation">documentation for assistance</a>.', 'edd_s3' ),
@@ -701,14 +717,14 @@ class EDD_Amazon_S3 {
 					'size' => 'regular'
 		);
 
-		$settings[] = array(
+		$s3_settings[] = array(
 					'id'   => 'edd_amazon_s3_bucket',
 					'name' => __( 'Amazon S3 Bucket', 'edd_s3' ),
 					'desc' => sprintf( __( 'To create new buckets or get a listing of your current buckets, go to your <a href="%s">S3 Console</a> (you must be logged in to access the console).  Your buckets will be listed on the left.  Enter the name of the default bucket you would like to use here.', 'edd_s3' ), esc_url( 'https://console.aws.amazon.com/s3/home' ) ),
 					'type' => 'text'
 		);
 
-		$settings[] = array(
+		$s3_settings[] = array(
 					'id'   => 'edd_amazon_s3_host',
 					'name' => __( 'Amazon S3 Host', 'edd_s3' ),
 					'desc' => __( 'Set the host you wish to use. Leave default if you do not know what this is for', 'edd_s3' ),
@@ -716,7 +732,7 @@ class EDD_Amazon_S3 {
 					'std'  => 's3.amazonaws.com'
 		);
 
-		$settings[] = array(
+		$s3_settings[] = array(
 					'id'   => 'edd_amazon_s3_default_expiry',
 					'name' => __( 'Link Expiry Time', 'edd_s3' ),
 					'desc' => __( 'Amazon S3 links expire after a certain amount of time. This default number of minutes will be used when capturing file downloads, but can be overriden per file if needed.', 'edd_s3' ),
@@ -724,7 +740,12 @@ class EDD_Amazon_S3 {
 					'type' => 'text'
 		);
 
-		return $settings;
+		if ( version_compare( EDD_VERSION, 2.5, '>=' ) ) {
+			$s3_settings = array( 'amazon_s3' => $s3_settings );
+		}
+
+		return array_merge( $settings, $s3_settings );
+
 	}
 
 	public function api_keys_entered() {
