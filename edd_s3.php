@@ -199,7 +199,7 @@ class EDD_Amazon_S3 {
 	public function show_admin_notices() {
 
 		if ( empty( $this->access_id ) || empty( $this->secret_key ) ) {
-			$url = admin_url( 'edit.php?post_type=download&page=edd-settings&tab=extensions' );
+			$url = admin_url( 'edit.php?post_type=download&page=edd-settings&tab=extensions&section=amazon_s3' );
 			echo '<div class="update error"><p>' . sprintf( __( 'Please enter your <a href="%s">Amazon S3 Access Key ID and Secret Key</a>', 'edd_s3' ), $url ) . '</p></div>';
 		}
 
@@ -254,7 +254,7 @@ class EDD_Amazon_S3 {
 <?php
 			if( ! $this->api_keys_entered() ) :
 ?>
-			<div class="error"><p><?php printf( __( 'Please enter your <a href="%s" target="_blank">Amazon S3 API keys</a>.', 'edd_s3' ), admin_url( 'edit.php?post_type=download&page=edd-settings&tab=extensions' ) ); ?></p></div>
+			<div class="error"><p><?php printf( __( 'Please enter your <a href="%s" target="_blank">Amazon S3 API keys</a>.', 'edd_s3' ), admin_url( 'edit.php?post_type=download&page=edd-settings&tab=extensions&section=amazon_s3' ) ); ?></p></div>
 <?php
 				return;
 			endif;
@@ -376,7 +376,7 @@ class EDD_Amazon_S3 {
 <?php
 			if( ! $this->api_keys_entered() ) :
 ?>
-			<div class="error"><p><?php printf( __( 'Please enter your <a href="%s" target="blank">Amazon S3 API keys</a>.', 'edd_s3' ), admin_url( 'edit.php?post_type=download&page=edd-settings&tab=extensions' ) ); ?></p></div>
+			<div class="error"><p><?php printf( __( 'Please enter your <a href="%s" target="blank">Amazon S3 API keys</a>.', 'edd_s3' ), admin_url( 'edit.php?post_type=download&page=edd-settings&tab=extensions&section=amazon_s3' ) ); ?></p></div>
 <?php
 				return;
 			endif;
