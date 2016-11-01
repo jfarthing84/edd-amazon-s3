@@ -1,10 +1,11 @@
 <?php
 /*
 Plugin Name: Easy Digital Downloads - Amazon S3
-Plugin URI: http://easydigitaldownloads.com/extension/amazon-s3/
+Plugin URI: http://easydigitaldownloads.com/downloads/amazon-s3/
 Description: Amazon S3 integration with EDD.  Allows you to upload or download directly from your S3 bucket. Configure on Settings > Extensions tab
 Version: 2.2.4
 Author: Easy Digital Downloads
+Author URI: https://easydigitaldownloads.com
 Text Domain: edd_s3
 Domain Path: languages
 */
