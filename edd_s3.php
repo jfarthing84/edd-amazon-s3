@@ -240,10 +240,8 @@ class EDD_Amazon_S3 {
 
 	public function s3_tabs( $tabs ) {
 		if ( ! wp_script_is( 'fes_form', 'enqueued' ) && ! wp_script_is( 'cfm_form', 'enqueued' ) ) {
-
 			$tabs['s3']         = __( 'Upload to Amazon S3', 'edd_s3' );
 			$tabs['s3_library'] = __( 'Amazon S3 Library', 'edd_s3' );
-
 		}
 
 		return $tabs;
@@ -420,11 +418,11 @@ class EDD_Amazon_S3 {
 						echo '<th>' . __( 'Actions', 'edd_s3' ) . '</th>';
 					echo '</tr>';
 
-					foreach ( $buckets as $key => $bucket ) {
+					foreach ( $buckets['buckets'] as $key => $bucket ) {
 						echo '<tr>';
-							echo '<td>' . $bucket . '</td>';
+							echo '<td>' . $bucket['name'] . '</td>';
 							echo '<td>';
-								echo '<a href="' . esc_url( add_query_arg( 'bucket', $bucket ) ) . '">' . __( 'Browse', 'edd_s3' ) . '</a>';
+								echo '<a href="' . esc_url( add_query_arg( 'bucket', $bucket['name'] ) ) . '">' . __( 'Browse', 'edd_s3' ) . '</a>';
 							echo '</td>';
 						echo '</tr>';
 
@@ -495,8 +493,35 @@ class EDD_Amazon_S3 {
 	<?php
 	}
 
+	/**
+	 * Retrieve a list of S3 buckets.
+	 *
+	 * @access public
+	 * @since  2.3
+	 *
+	 * @return array $results Array of S3 buckets.
+	 */
 	public function get_s3_buckets( $marker = null, $max = null ) {
-		return $this->s3->listBuckets();
+		$buckets = $this->s3->listBuckets();
+
+		$results = array();
+
+		if ( isset( $buckets['Owner'], $buckets['Owner']['ID'], $buckets['Owner']['DisplayName'] ) ) {
+			$results['owner'] = array(
+				'id'   => $buckets['Owner']['ID'],
+				'name' => $buckets['Owner']['DisplayName']
+			);
+		}
+
+		$results['buckets'] = array();
+		foreach ( $buckets['Buckets'] as $bucket ) {
+			$results['buckets'][] = array(
+				'name' => $bucket['Name'],
+				'time' => strtotime( (string) $bucket['CreationDate'] )
+			);
+		}
+
+		return $results;
 	}
 
 	public function get_s3_files( $marker = null, $max = null ) {
