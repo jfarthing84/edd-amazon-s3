@@ -10,13 +10,73 @@ Text Domain: edd_s3
 Domain Path: languages
 */
 
-class EDD_Amazon_S3 {
+// Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) exit;
 
+// Include the AWS SDK using the Composer autoloader.
+require 'aws-sdk/aws-autoloader.php';
+
+use Aws\S3\S3Client;
+use Aws\S3\Exception\S3Exception;
+
+/**
+ * EDD_Amazon_S3 Class.
+ */
+class EDD_Amazon_S3 {
+	/**
+	 * Holds the instance
+	 *
+	 * Ensures that only one instance of EDD Reviews exists in memory at any one
+	 * time and it also prevents needing to define globals all over the place.
+	 *
+	 * TL;DR This is a static property property that holds the singleton instance.
+	 *
+	 * @var object
+	 * @static
+	 * @since 1.0
+	 */
 	private static $instance;
+
+	/**
+     * Acesss Key ID
+     *
+	 * @var string
+	 */
 	private $access_id;
+
+	/**
+     * Secret Key.
+     *
+	 * @var string
+	 */
 	private $secret_key;
+
+	/**
+     * S3 Bucket.
+     *
+	 * @var string
+	 */
 	private $bucket;
+
+	/**
+     * Link Expiry Time.
+     *
+	 * @var int
+	 */
 	private $default_expiry;
+
+	/**
+	 * AWS S3 Region.
+     *
+     * @var string
+	 */
+	private $region;
+
+	/**
+     * Instance of the S3Client.
+     *
+	 * @var S3Client
+	 */
 	private $s3;
 
 	/**
@@ -29,8 +89,7 @@ class EDD_Amazon_S3 {
 	 * @return object
 	 */
 	public static function get_instance() {
-
-		if ( ! self::$instance ) {
+		if ( ! isset( self::$instance ) && ! ( self::$instance instanceof EDD_Amazon_S3 ) ) {
 			self::$instance = new EDD_Amazon_S3();
 		}
 
@@ -38,18 +97,15 @@ class EDD_Amazon_S3 {
 	}
 
 	/**
-	 * Class constructor.  Includes constants, includes and init method.
-	 *
+	 * Class constructor. Includes constants, includes and init method.
+     *
 	 * @since 1.0
-	 *
-	 * @access public
-	 * @return void
+	 * @access private
 	 */
 	private function __construct() {
-
 		global $edd_options;
 
-		if( ! class_exists( 'Easy_Digital_Downloads' ) ) {
+		if ( ! class_exists( 'Easy_Digital_Downloads' ) ) {
 			return;
 		}
 
@@ -57,17 +113,22 @@ class EDD_Amazon_S3 {
 		$this->secret_key     = isset( $edd_options['edd_amazon_s3_key'] )            ? trim( $edd_options['edd_amazon_s3_key'] )            : '';
 		$this->bucket         = isset( $edd_options['edd_amazon_s3_bucket'] )         ? trim( $edd_options['edd_amazon_s3_bucket'] )         : '';
 		$this->default_expiry = isset( $edd_options['edd_amazon_s3_default_expiry'] ) ? trim( $edd_options['edd_amazon_s3_default_expiry'] ) : '5';
+		$this->region         = isset( $edd_options['edd_amazon_s3_region'] )         ? trim( $edd_options['edd_amazon_s3_region'] )         : 'us-east-1';
 
 		$this->constants();
-		$this->includes();
 		$this->load_textdomain();
 		$this->init();
 
-		$this->s3 = new S3( $this->access_id, $this->secret_key, is_ssl(), $this->get_host() );
-
-		if( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-			$this->s3->setExceptions();
-		}
+		$this->s3 = new S3Client( array(
+             'version'     => '2006-03-01',
+             'region'      => $this->region,
+             'credentials' => array(
+	            'key'    => $this->access_id,
+	            'secret' => $this->secret_key
+            ),
+            'signature_version' => 'v4',
+             'scheme' => is_ssl() ? 'https' : 'http'
+        ) );
 	}
 
 	/**
@@ -79,7 +140,6 @@ class EDD_Amazon_S3 {
 	 * @return void
 	 */
 	private function constants() {
-
 		// plugin version
 		define( 'EDD_AS3_VERSION', '2.2.5' );
 
@@ -94,56 +154,39 @@ class EDD_Amazon_S3 {
 		define( 'EDD_AS3_URL'      , plugins_url( '', __FILE__ ) );
 
 		define( 'EDD_AS3_SL_PRODUCT_NAME', 'Amazon S3' );
-
 	}
 
-	/**
-	 * Register generally helpful constants.
-	 *
-	 * @since 1.0
-	 *
-	 * @access private
-	 * @return void
-	 */
-	private function includes() {
+    /**
+     * Internationalization
+     *
+     * @access      public
+     * @since       2.1.9
+     * @return      void
+     */
+    public function load_textdomain() {
+        // Set filter for language directory
+        $lang_dir = EDD_AS3_FILE_PATH . '/languages/';
+        $lang_dir = apply_filters( 'edd_amazon_s3_languages_directory', $lang_dir );
 
-		if ( ! class_exists( 'S3' ) ) {
-			include_once EDD_AS3_FILE_PATH . '/s3.php';
-		}
+        // Traditional WordPress plugin locale filter
+        $locale = apply_filters( 'plugin_locale', get_locale(), 'edd-amazon-s3' );
+        $mofile = sprintf( '%1$s-%2$s.mo', 'edd-amazon-s3', $locale );
 
-	}
+        // Setup paths to current locale file
+        $mofile_local   = $lang_dir . $mofile;
+        $mofile_global  = WP_LANG_DIR . '/edd-amazon-s3/' . $mofile;
 
-		/**
-		 * Internationalization
-		 *
-		 * @access      public
-		 * @since       2.1.9
-		 * @return      void
-		 */
-		public function load_textdomain() {
-		// Set filter for language directory
-		$lang_dir = EDD_AS3_FILE_PATH . '/languages/';
-		$lang_dir = apply_filters( 'edd_amazon_s3_languages_directory', $lang_dir );
-
-		// Traditional WordPress plugin locale filter
-		$locale = apply_filters( 'plugin_locale', get_locale(), 'edd-amazon-s3' );
-		$mofile = sprintf( '%1$s-%2$s.mo', 'edd-amazon-s3', $locale );
-
-		// Setup paths to current locale file
-		$mofile_local   = $lang_dir . $mofile;
-		$mofile_global  = WP_LANG_DIR . '/edd-amazon-s3/' . $mofile;
-
-		if( file_exists( $mofile_global ) ) {
-			// Look in global /wp-content/languages/edd-amazon-s3/ folder
-			load_textdomain( 'edd_s3', $mofile_global );
-		} elseif( file_exists( $mofile_local ) ) {
-			// Look in local /wp-content/plugins/edd-amazon-s3/languages/ folder
-			load_textdomain( 'edd_s3', $mofile_local );
-		} else {
-			// Load the default language files
-			load_plugin_textdomain( 'edd_s3', false, $lang_dir );
-		}
-		}
+        if( file_exists( $mofile_global ) ) {
+            // Look in global /wp-content/languages/edd-amazon-s3/ folder
+            load_textdomain( 'edd_s3', $mofile_global );
+        } elseif( file_exists( $mofile_local ) ) {
+            // Look in local /wp-content/plugins/edd-amazon-s3/languages/ folder
+            load_textdomain( 'edd_s3', $mofile_local );
+        } else {
+            // Load the default language files
+            load_plugin_textdomain( 'edd_s3', false, $lang_dir );
+        }
+    }
 
 	/**
 	 * Run action and filter hooks.
@@ -154,12 +197,11 @@ class EDD_Amazon_S3 {
 	 * @return void
 	 */
 	private function init() {
-
-		if( class_exists( 'EDD_License' ) ) {
+		if ( class_exists( 'EDD_License' ) ) {
 			$edds3_license = new EDD_License( __FILE__, EDD_AS3_SL_PRODUCT_NAME, EDD_AS3_VERSION, 'Pippin Williamson', 'edd_amazon_s3_license_key' );
 		}
 
-		//Adds Media Tab
+		// Adds Media Tab
 		add_filter( 'media_upload_tabs'       , array( $this, 's3_tabs' ) );
 		add_action( 'media_upload_s3'         , array( $this, 's3_upload_iframe' ) );
 		add_action( 'media_upload_s3_library' , array( $this, 's3_library_iframe' ) );
@@ -168,7 +210,7 @@ class EDD_Amazon_S3 {
 		add_filter( 'edd_settings_sections_extensions',  array( $this, 'settings_section' ) );
 		add_filter( 'edd_settings_extensions' , array( $this, 'add_settings' ) );
 
-		//Handles Uploading to S3
+		// Handles Uploading to S3
 		add_filter( 'edd_s3_upload'  , array( $this, 'upload_handler' ), 10, 2 );
 
 		// modify the file name on download
@@ -692,69 +734,84 @@ class EDD_Amazon_S3 {
 
 
 	public function add_settings( $settings ) {
-
-		$s3_settings = array();
-
-		$s3_settings[] = array(
-					'id'   => 'amazon_s3_settings',
-					'name' => __( '<strong>Amazon S3 Settings</strong>', 'edd_s3' ),
-					'desc' => '',
-					'type' => 'header'
-		);
-
-		$s3_settings[] = array(
-					'id'   => 'edd_amazon_s3_id',
-					'name' => __( 'Amazon S3 Access Key ID', 'edd_s3' ),
-					'desc' => __( 'Enter your IAM user&#39;s Access Key ID. See our <a href="http://docs.easydigitaldownloads.com/article/393-amazon-s3-documentation">documentation for assistance</a>.', 'edd_s3' ),
-					'type' => 'text',
-					'size' => 'regular'
-		);
-
-		$s3_settings[] = array(
-					'id'   => 'edd_amazon_s3_key',
-					'name' => __( 'Amazon S3 Secret Key', 'edd_s3' ),
-					'desc' => __( 'Enter your IAM user&#39;s Secret Key. See our <a href="http://docs.easydigitaldownloads.com/article/393-amazon-s3-documentation">documentation for assistance</a>.', 'edd_s3' ),
-					'type' => 'text',
-					'size' => 'regular'
-		);
-
-		$s3_settings[] = array(
-					'id'   => 'edd_amazon_s3_bucket',
-					'name' => __( 'Amazon S3 Bucket', 'edd_s3' ),
-					'desc' => sprintf( __( 'To create new buckets or get a listing of your current buckets, go to your <a href="%s">S3 Console</a> (you must be logged in to access the console).  Your buckets will be listed on the left.  Enter the name of the default bucket you would like to use here.', 'edd_s3' ), esc_url( 'https://console.aws.amazon.com/s3/home' ) ),
-					'type' => 'text'
-		);
-
-		$s3_settings[] = array(
-					'id'   => 'edd_amazon_s3_host',
-					'name' => __( 'Amazon S3 Host', 'edd_s3' ),
-					'desc' => __( 'Set the host you wish to use. Leave default if you do not know what this is for', 'edd_s3' ),
-					'type' => 'text',
-					'std'  => 's3.amazonaws.com'
-		);
-
-		$s3_settings[] = array(
-					'id'   => 'edd_amazon_s3_default_expiry',
-					'name' => __( 'Link Expiry Time', 'edd_s3' ),
-					'desc' => __( 'Amazon S3 links expire after a certain amount of time. This default number of minutes will be used when capturing file downloads, but can be overriden per file if needed.', 'edd_s3' ),
-					'std' => '5',
-					'type' => 'text'
-		);
+		$s3_settings = array(
+			array(
+				'id'   => 'amazon_s3_settings',
+				'name' => __( '<strong>Amazon S3 Settings</strong>', 'edd_s3' ),
+				'desc' => '',
+				'type' => 'header'
+			),
+			array(
+				'id'   => 'edd_amazon_s3_id',
+				'name' => __( 'Amazon S3 Access Key ID', 'edd_s3' ),
+				'desc' => __( 'Enter your IAM user&#39;s Access Key ID. See our <a href="http://docs.easydigitaldownloads.com/article/393-amazon-s3-documentation">documentation for assistance</a>.', 'edd_s3' ),
+				'type' => 'text',
+				'size' => 'regular'
+			),
+			array(
+				'id'   => 'edd_amazon_s3_key',
+				'name' => __( 'Amazon S3 Secret Key', 'edd_s3' ),
+				'desc' => __( 'Enter your IAM user&#39;s Secret Key. See our <a href="http://docs.easydigitaldownloads.com/article/393-amazon-s3-documentation">documentation for assistance</a>.', 'edd_s3' ),
+				'type' => 'text',
+				'size' => 'regular'
+			),
+			array(
+				'id'   => 'edd_amazon_s3_bucket',
+				'name' => __( 'Amazon S3 Bucket', 'edd_s3' ),
+				'desc' => sprintf( __( 'To create new buckets or get a listing of your current buckets, go to your <a href="%s">S3 Console</a> (you must be logged in to access the console).  Your buckets will be listed on the left.  Enter the name of the default bucket you would like to use here.', 'edd_s3' ), esc_url( 'https://console.aws.amazon.com/s3/home' ) ),
+				'type' => 'text'
+			),
+			array(
+				'id'   => 'edd_amazon_s3_host',
+				'name' => __( 'Amazon S3 Host', 'edd_s3' ),
+				'desc' => __( 'Set the host you wish to use. Leave default if you do not know what this is for', 'edd_s3' ),
+				'type' => 'text',
+				'std'  => 's3.amazonaws.com'
+			),
+			array(
+				'id'      => 'edd_amazon_s3_region',
+				'name'    => __( 'Amazon S3 Region', 'edd_s3' ),
+				'desc'    => __( 'Set the region of the Amaazon S3 host', 'edd_s3' ),
+				'type'    => 'select',
+				'options' => array(
+				        'us-east-2'      => __( 'US East (Ohio)', 'edd_s3' ),
+                        'us-east-1'      => __( 'US East (N. Virginia)', 'edd_s3' ),
+                        'us-west-1'      => __( 'US West (N. California)', 'edd_s3' ),
+                        'us-west-2'      => __( 'US West (Oregon)', 'edd_s3' ),
+                        'ca-central-1'   => __( 'Canada (Central)', 'edd_s3' ),
+                        'ap-south-1'     => __( 'Asia Pacific (Mumbai)', 'edd_s3' ),
+                        'ap-northeast-2' => __( 'Asia Pacific (Seoul)', 'edd_s3' ),
+                        'ap-southeast-1' => __( 'Asia Pacific (Singapore)', 'edd_s3' ),
+                        'ap-southeast-2' => __( 'Asia Pacific (Sydney)', 'edd_s3' ),
+                        'ap-northeast-1' => __( 'Asia Pacific (Tokyo)', 'edd_s3' ),
+                        'eu-central-1'   => __( 'EU (Frankfurt)', 'edd_s3' ),
+                        'eu-west-1'      => __( 'EU (Ireland)', 'edd_s3' ),
+                        'eu-west-2'      => __( 'EU (London)', 'edd_s3' ),
+                        'sa-east-1'      => __( 'South America (São Paulo)', 'edd_s3' ),
+                ),
+				'std'  => 'us-east-1'
+            ),
+			array(
+				'id'   => 'edd_amazon_s3_default_expiry',
+				'name' => __( 'Link Expiry Time', 'edd_s3' ),
+				'desc' => __( 'Amazon S3 links expire after a certain amount of time. This default number of minutes will be used when capturing file downloads, but can be overriden per file if needed.', 'edd_s3' ),
+				'std' => '5',
+				'type' => 'text'
+			)
+        );
 
 		if ( version_compare( EDD_VERSION, 2.5, '>=' ) ) {
 			$s3_settings = array( 'amazon_s3' => $s3_settings );
 		}
 
 		return array_merge( $settings, $s3_settings );
-
 	}
 
 	public function api_keys_entered() {
-
 		$id  = edd_get_option( 'edd_amazon_s3_id' );
 		$key = edd_get_option( 'edd_amazon_s3_key' );
 
-		if( empty( $id ) || empty( $key ) ) {
+		if ( empty( $id ) || empty( $key ) ) {
 			return false;
 		}
 
@@ -770,8 +827,7 @@ class EDD_Amazon_S3 {
 	 * @return bool
 	 */
 	public function valid_url( $valid, $value = '' ) {
-
-		if( ! $valid && is_string( $value ) ) {
+		if ( ! $valid && is_string( $value ) ) {
 			$ext   = edd_get_file_extension( $value );
 			$valid = ! empty( $ext );
 		}
@@ -790,17 +846,15 @@ class EDD_Amazon_S3 {
 	 * @return array
 	 */
 	public function send_fes_files_to_s3( $files = array(), $post_id = 0 ) {
-
-		if( ! function_exists( 'fes_get_attachment_id_from_url' ) ) {
+		if ( ! function_exists( 'fes_get_attachment_id_from_url' ) ) {
 			return $files;
 		}
 
-		if( ! empty( $files ) && is_array( $files ) ) {
-
-			foreach( $files as $key => $file ) {
-
+		if ( ! empty( $files ) && is_array( $files ) ) {
+			foreach ( $files as $key => $file ) {
 				$attachment_id = fes_get_attachment_id_from_url( $file['file'], get_current_user_id() );
-				if( ! $attachment_id ) {
+
+				if ( ! $attachment_id ) {
 					continue;
 				}
 
@@ -817,14 +871,10 @@ class EDD_Amazon_S3 {
 				$files[ $key ]['file'] = edd_get_option( 'edd_amazon_s3_bucket' ) . '/' . $folder . basename( $file['file'] );
 
 				wp_delete_attachment( $attachment_id, true );
-
-
 			}
-
 		}
 
 		return $files;
-
 	}
 
 	/**
@@ -860,15 +910,12 @@ class EDD_Amazon_S3 {
 	 * @return string      If it's an S3 URL, the full URL to S3, otherwise it passes the provided value
 	 */
 	public function file_download_url( $url ) {
-
 		if ( $this->is_s3_file( $url ) ) {
 			$url = $this->get_s3_url( $url );
 		}
 
 		return $url;
-
 	}
-
 }
 
 function edd_s3_load() {
