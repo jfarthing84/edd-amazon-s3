@@ -524,8 +524,49 @@ class EDD_Amazon_S3 {
 		return $results;
 	}
 
+	/**
+	 * Retrieve the files in a S3 bucket.
+	 *
+	 * @access public
+	 * @since 2.3
+	 *
+	 * @param  string $marker Last files.
+	 * @param  int    $max    Maximum files to retrieve.
+	 * @return array $files S3 Files.
+	 */
 	public function get_s3_files( $marker = null, $max = null ) {
-		return $this->s3->getBucket( $this->bucket, null, $marker, $max );
+		try {
+			$files = $this->s3->listObjects(  array(
+				'Bucket'  => $this->bucket,
+				'Marker'  => $marker,
+				'MaxKeys' => $max
+			) );
+
+			if ( isset( $files['Contents'] ) ) {
+				foreach ( $files['Contents'] as $file ) {
+					$results[ $file['Key'] ] = array(
+						'name' => $file['Key'],
+						'time' => strtotime( $file['LastModified'] ),
+						'size' => $file['Size'],
+						'hash' => substr( $file['ETag'], 1, -1 )
+					);
+				}
+			}
+
+			if ( isset( $files['IsTruncated'] ) && ! $files['IsTruncated'] ) {
+				return $results;
+			}
+
+			if ( isset( $files['NextMarker'] ) ) {
+				$nextMarker = $files['NextMarker'];
+			}
+
+			return $results;
+		} catch ( S3Exception $e ) {
+			echo $this->generate_error( $e );
+
+			return array();
+		}
 	}
 
 	public function get_s3_url( $filename, $expires = 5 ) {
@@ -925,6 +966,22 @@ class EDD_Amazon_S3 {
 		}
 
 		return $url;
+	}
+
+	/**
+	 * Generate an error to display to the user.
+	 *
+	 * @access private
+	 * @since 2.3
+	 *
+	 * @param Aws\S3\Exception\S3Exception $e S3Exception.
+	 */
+	private function generate_error( $e ) {
+		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+			echo '<div class="notice notice-error"><p>' . $e . '</p></div>';
+		} else {
+			echo '<div class="notice notice-error"><p>' . $e->getMessage() . '</p></div>';
+		}
 	}
 }
 
