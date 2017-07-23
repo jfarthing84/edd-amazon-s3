@@ -38,43 +38,43 @@ class EDD_Amazon_S3 {
 	private static $instance;
 
 	/**
-     * Acesss Key ID
-     *
+	 * Acesss Key ID
+	 *
 	 * @var string
 	 */
 	private $access_id;
 
 	/**
-     * Secret Key.
-     *
+	 * Secret Key.
+	 *
 	 * @var string
 	 */
 	private $secret_key;
 
 	/**
-     * S3 Bucket.
-     *
+	 * S3 Bucket.
+	 *
 	 * @var string
 	 */
 	private $bucket;
 
 	/**
-     * Link Expiry Time.
-     *
+	 * Link Expiry Time.
+	 *
 	 * @var int
 	 */
 	private $default_expiry;
 
 	/**
 	 * AWS S3 Region.
-     *
-     * @var string
+	 *
+	 * @var string
 	 */
 	private $region;
 
 	/**
-     * Instance of the S3Client.
-     *
+	 * Instance of the S3Client.
+	 *
 	 * @var S3Client
 	 */
 	private $s3;
@@ -98,7 +98,7 @@ class EDD_Amazon_S3 {
 
 	/**
 	 * Class constructor. Includes constants, includes and init method.
-     *
+	 *
 	 * @since 1.0
 	 * @access private
 	 */
@@ -120,15 +120,15 @@ class EDD_Amazon_S3 {
 		$this->init();
 
 		$this->s3 = new S3Client( array(
-             'version'     => '2006-03-01',
-             'region'      => $this->region,
-             'credentials' => array(
-	            'key'    => $this->access_id,
-	            'secret' => $this->secret_key
-            ),
-            'signature_version' => 'v4',
-             'scheme' => is_ssl() ? 'https' : 'http'
-        ) );
+			 'version'     => '2006-03-01',
+			 'region'      => $this->region,
+			 'credentials' => array(
+				'key'    => $this->access_id,
+				'secret' => $this->secret_key
+			),
+			'signature_version' => 'v4',
+			 'scheme' => is_ssl() ? 'https' : 'http'
+		) );
 	}
 
 	/**
@@ -156,37 +156,37 @@ class EDD_Amazon_S3 {
 		define( 'EDD_AS3_SL_PRODUCT_NAME', 'Amazon S3' );
 	}
 
-    /**
-     * Internationalization
-     *
-     * @access      public
-     * @since       2.1.9
-     * @return      void
-     */
-    public function load_textdomain() {
-        // Set filter for language directory
-        $lang_dir = EDD_AS3_FILE_PATH . '/languages/';
-        $lang_dir = apply_filters( 'edd_amazon_s3_languages_directory', $lang_dir );
+	/**
+	 * Internationalization
+	 *
+	 * @access      public
+	 * @since       2.1.9
+	 * @return      void
+	 */
+	public function load_textdomain() {
+		// Set filter for language directory
+		$lang_dir = EDD_AS3_FILE_PATH . '/languages/';
+		$lang_dir = apply_filters( 'edd_amazon_s3_languages_directory', $lang_dir );
 
-        // Traditional WordPress plugin locale filter
-        $locale = apply_filters( 'plugin_locale', get_locale(), 'edd-amazon-s3' );
-        $mofile = sprintf( '%1$s-%2$s.mo', 'edd-amazon-s3', $locale );
+		// Traditional WordPress plugin locale filter
+		$locale = apply_filters( 'plugin_locale', get_locale(), 'edd-amazon-s3' );
+		$mofile = sprintf( '%1$s-%2$s.mo', 'edd-amazon-s3', $locale );
 
-        // Setup paths to current locale file
-        $mofile_local   = $lang_dir . $mofile;
-        $mofile_global  = WP_LANG_DIR . '/edd-amazon-s3/' . $mofile;
+		// Setup paths to current locale file
+		$mofile_local   = $lang_dir . $mofile;
+		$mofile_global  = WP_LANG_DIR . '/edd-amazon-s3/' . $mofile;
 
-        if( file_exists( $mofile_global ) ) {
-            // Look in global /wp-content/languages/edd-amazon-s3/ folder
-            load_textdomain( 'edd_s3', $mofile_global );
-        } elseif( file_exists( $mofile_local ) ) {
-            // Look in local /wp-content/plugins/edd-amazon-s3/languages/ folder
-            load_textdomain( 'edd_s3', $mofile_local );
-        } else {
-            // Load the default language files
-            load_plugin_textdomain( 'edd_s3', false, $lang_dir );
-        }
-    }
+		if( file_exists( $mofile_global ) ) {
+			// Look in global /wp-content/languages/edd-amazon-s3/ folder
+			load_textdomain( 'edd_s3', $mofile_global );
+		} elseif( file_exists( $mofile_local ) ) {
+			// Look in local /wp-content/plugins/edd-amazon-s3/languages/ folder
+			load_textdomain( 'edd_s3', $mofile_local );
+		} else {
+			// Load the default language files
+			load_plugin_textdomain( 'edd_s3', false, $lang_dir );
+		}
+	}
 
 	/**
 	 * Run action and filter hooks.
@@ -774,23 +774,23 @@ class EDD_Amazon_S3 {
 				'desc'    => __( 'Set the region of the Amaazon S3 host', 'edd_s3' ),
 				'type'    => 'select',
 				'options' => array(
-				        'us-east-2'      => __( 'US East (Ohio)', 'edd_s3' ),
-                        'us-east-1'      => __( 'US East (N. Virginia)', 'edd_s3' ),
-                        'us-west-1'      => __( 'US West (N. California)', 'edd_s3' ),
-                        'us-west-2'      => __( 'US West (Oregon)', 'edd_s3' ),
-                        'ca-central-1'   => __( 'Canada (Central)', 'edd_s3' ),
-                        'ap-south-1'     => __( 'Asia Pacific (Mumbai)', 'edd_s3' ),
-                        'ap-northeast-2' => __( 'Asia Pacific (Seoul)', 'edd_s3' ),
-                        'ap-southeast-1' => __( 'Asia Pacific (Singapore)', 'edd_s3' ),
-                        'ap-southeast-2' => __( 'Asia Pacific (Sydney)', 'edd_s3' ),
-                        'ap-northeast-1' => __( 'Asia Pacific (Tokyo)', 'edd_s3' ),
-                        'eu-central-1'   => __( 'EU (Frankfurt)', 'edd_s3' ),
-                        'eu-west-1'      => __( 'EU (Ireland)', 'edd_s3' ),
-                        'eu-west-2'      => __( 'EU (London)', 'edd_s3' ),
-                        'sa-east-1'      => __( 'South America (São Paulo)', 'edd_s3' ),
-                ),
+						'us-east-2'      => __( 'US East (Ohio)', 'edd_s3' ),
+						'us-east-1'      => __( 'US East (N. Virginia)', 'edd_s3' ),
+						'us-west-1'      => __( 'US West (N. California)', 'edd_s3' ),
+						'us-west-2'      => __( 'US West (Oregon)', 'edd_s3' ),
+						'ca-central-1'   => __( 'Canada (Central)', 'edd_s3' ),
+						'ap-south-1'     => __( 'Asia Pacific (Mumbai)', 'edd_s3' ),
+						'ap-northeast-2' => __( 'Asia Pacific (Seoul)', 'edd_s3' ),
+						'ap-southeast-1' => __( 'Asia Pacific (Singapore)', 'edd_s3' ),
+						'ap-southeast-2' => __( 'Asia Pacific (Sydney)', 'edd_s3' ),
+						'ap-northeast-1' => __( 'Asia Pacific (Tokyo)', 'edd_s3' ),
+						'eu-central-1'   => __( 'EU (Frankfurt)', 'edd_s3' ),
+						'eu-west-1'      => __( 'EU (Ireland)', 'edd_s3' ),
+						'eu-west-2'      => __( 'EU (London)', 'edd_s3' ),
+						'sa-east-1'      => __( 'South America (São Paulo)', 'edd_s3' ),
+				),
 				'std'  => 'us-east-1'
-            ),
+			),
 			array(
 				'id'   => 'edd_amazon_s3_default_expiry',
 				'name' => __( 'Link Expiry Time', 'edd_s3' ),
@@ -798,7 +798,7 @@ class EDD_Amazon_S3 {
 				'std' => '5',
 				'type' => 'text'
 			)
-        );
+		);
 
 		if ( version_compare( EDD_VERSION, 2.5, '>=' ) ) {
 			$s3_settings = array( 'amazon_s3' => $s3_settings );
