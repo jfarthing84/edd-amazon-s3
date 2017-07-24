@@ -631,17 +631,33 @@ class EDD_Amazon_S3 {
 		}
 	}
 
+	/**
+	 * Upload file to S3 Bucket.
+	 *
+	 * @access public
+	 * @since 2.3
+	 *
+	 * @param  array $file File info.
+	 * @return bool Whether the upload was successful or not.
+	 */
 	public function upload_file( $file = array() ) {
-		$bucket            = empty( $file['bucket'] ) ? $this->bucket : $file['bucket'];
+		if ( empty( $file ) ) {
+			return false;
+		}
 
-		$resource          = $this->s3->inputFile( $file['file'] );
-		$resource['type']  = $file['type'];
+		$bucket = empty( $file['bucket'] ) ? $this->bucket : $file['bucket'];
 
-		$push_file = $this->s3->putObject( $resource, $bucket, $file['name'] );
+		try {
+			$result = $this->s3->putObject( array(
+				'Bucket'     => $bucket,
+				'Key'        => $file['name'],
+				'SourceFile' => $file['file']
+			) );
 
-		if ( $push_file ) {
 			return true;
-		} else {
+		} catch ( S3Exception $e ) {
+			echo $this->generate_error( $e );
+
 			return false;
 		}
 	}
