@@ -304,8 +304,8 @@ class EDD_Amazon_S3 {
 			<form enctype="multipart/form-data" method="post" action="<?php echo esc_attr( $form_action_url ); ?>" class="edd-s3-upload">
 				<p>
 					<select name="edd_s3_bucket" id="edd_s3_bucket">
-					<?php foreach ( $buckets as $key => $bucket ) : ?>
-						<option value="<?php echo $bucket; ?>"><?php echo $bucket; ?></option>
+					<?php foreach ( $buckets['buckets'] as $key => $bucket ) { ?>
+						<option value="<?php echo $bucket['Name']; ?>"><?php echo $bucket['Name']; ?></option>
 					<?php endforeach; ?>
 					</select>
 					<label for="edd_s3_bucket"><?php _e( 'Select a bucket to upload the file to', 'edd_s3' ); ?></label>
@@ -448,7 +448,7 @@ class EDD_Amazon_S3 {
 
 					foreach ( $files as $key => $file ) {
 						echo '<tr>';
-							if ( $i == 0) {
+							if ( $i == 0 ) {
 								$first_file = $key;
 							}
 
