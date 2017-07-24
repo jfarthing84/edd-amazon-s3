@@ -595,7 +595,14 @@ class EDD_Amazon_S3 {
 			$bucket = $this->bucket;
 		}
 
-		$url = $this->s3->getAuthenticatedURL( $bucket, $filename, ( 60 * $expires ), false, is_ssl() );
+		$object_command = $this->s3->getCommand( 'GetObject', array(
+			'Bucket' => $bucket,
+			'Key'    => $filename
+		) );
+
+		$request = $this->s3->createPresignedRequest( $object_command, '+' . $expires . ' minutes' );
+
+		$url = (string) $request->getUri();
 
 		return $url;
 	}
