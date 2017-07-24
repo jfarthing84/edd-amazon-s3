@@ -305,7 +305,7 @@ class EDD_Amazon_S3 {
 				<p>
 					<select name="edd_s3_bucket" id="edd_s3_bucket">
 					<?php foreach ( $buckets['buckets'] as $key => $bucket ) { ?>
-						<option value="<?php echo $bucket['Name']; ?>"><?php echo $bucket['Name']; ?></option>
+						<option value="<?php echo $bucket['name']; ?>"><?php echo $bucket['name']; ?></option>
 					<?php } ?>
 					</select>
 					<label for="edd_s3_bucket"><?php _e( 'Select a bucket to upload the file to', 'edd_s3' ); ?></label>
