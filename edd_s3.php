@@ -409,11 +409,8 @@ class EDD_Amazon_S3 {
 
 			} else {
 
-				$back = admin_url( 'media-upload.php?post_id=' . absint( $_GET['post_id'] ) );
-
 				if( is_array( $files ) ) {
 					$i = 0;
-					$total_items = count( $files );
 
 					echo '<p><button class="button-secondary" onclick="history.back();">' . __( 'Go Back', 'edd_s3' ) . '</button></p>';
 
@@ -426,12 +423,6 @@ class EDD_Amazon_S3 {
 
 						foreach ( $files as $key => $file ) {
 							echo '<tr>';
-								if( $i == 0)
-									$first_file = $key;
-
-								if( $i == 14 )
-									$last_file = $key;
-
 								if( $file['name'][ strlen( $file['name'] ) - 1 ] === '/' ) {
 									continue; // Don't show folders
 								}
