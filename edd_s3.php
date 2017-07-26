@@ -423,6 +423,10 @@ class EDD_Amazon_S3 {
 
 						foreach ( $files as $key => $file ) {
 							echo '<tr>';
+								if ( $i == 14 ) {
+									$last_file = $key;
+								}
+
 								if( $file['name'][ strlen( $file['name'] ) - 1 ] === '/' ) {
 									continue; // Don't show folders
 								}
