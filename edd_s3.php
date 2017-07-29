@@ -118,9 +118,8 @@ class EDD_Amazon_S3 {
 		$this->load_textdomain();
 		$this->init();
 
-		$this->s3 = new S3Client( array(
+		$this->s3 = new \Aws\S3\S3MultiRegionClient( array(
 			'version'     => '2006-03-01',
-			'region'      => 'us-east-1', // Default region set to us-east-1
 			'credentials' => array(
 				'key'    => $this->access_id,
 				'secret' => $this->secret_key
@@ -530,13 +529,11 @@ class EDD_Amazon_S3 {
 		}
 
 		$results['buckets'] = array();
-		foreach ( $buckets['Buckets'] as $bucket ) {
-		    $location = $this->s3->getBucketLocation( array( 'Bucket' => $bucket['Name'] ) );
 
+		foreach ( $buckets['Buckets'] as $bucket ) {
 			$results['buckets'][] = array(
 				'name'   => $bucket['Name'],
 				'time'   => strtotime( (string) $bucket['CreationDate'] ),
-				'region' => $location['LocationConstraint']
 			);
 		}
 
@@ -554,6 +551,8 @@ class EDD_Amazon_S3 {
 	 * @return array $files S3 Files.
 	 */
 	public function get_s3_files( $marker = null, $max = null ) {
+	    $results = null;
+
 		try {
 			$files = $this->s3->listObjects(  array(
 				'Bucket'  => $this->bucket,
@@ -582,7 +581,7 @@ class EDD_Amazon_S3 {
 
 			return $results;
 		} catch ( S3Exception $e ) {
-			echo $this->generate_error( $e );
+			$this->generate_error( $e );
 
 			return array();
 		}
@@ -615,7 +614,7 @@ class EDD_Amazon_S3 {
 				}
 			}
 
-			if ( in_array( $bucket, $buckets ) ) {
+			if ( in_array( $bucket, wp_list_pluck( $buckets['buckets'], 'name' ) ) ) {
 				$filename = preg_replace( '#^' . $parts[0] . '/#', '', $filename, 1 );
 			} else {
 				$bucket = $this->bucket;
@@ -692,7 +691,7 @@ class EDD_Amazon_S3 {
 		$bucket = empty( $file['bucket'] ) ? $this->bucket : $file['bucket'];
 
 		try {
-			$result = $this->s3->putObject( array(
+			$this->s3->putObject( array(
 				'Bucket'     => $bucket,
 				'Key'        => $file['name'],
 				'SourceFile' => $file['file']
