@@ -517,7 +517,14 @@ class EDD_Amazon_S3 {
 	 * @return array $results Array of S3 buckets.
 	 */
 	public function get_s3_buckets( $marker = null, $max = null ) {
-		$buckets = $this->s3->listBuckets();
+	    $buckets = null;
+
+	    try {
+		    $buckets = $this->s3->listBuckets();
+	    } catch (S3Exception $e) {
+	        $this->generate_error($e);
+	        return;
+        }
 
 		$results = array();
 
@@ -1074,11 +1081,7 @@ class EDD_Amazon_S3 {
 	 * @param Aws\S3\Exception\S3Exception $e S3Exception.
 	 */
 	private function generate_error( $e ) {
-		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-			echo '<div class="notice notice-error"><p>' . $e . '</p></div>';
-		} else {
-			echo '<div class="notice notice-error"><p>' . $e->getMessage() . '</p></div>';
-		}
+        echo '<div class="notice notice-error"><p><strong>' . __( 'AWS Error:', 'edd_s3' ) . '</strong> ' . $e->getAwsErrorMessage() . '</p></div>';
 	}
 }
 
