@@ -517,14 +517,14 @@ class EDD_Amazon_S3 {
 	 * @return array $results Array of S3 buckets.
 	 */
 	public function get_s3_buckets( $marker = null, $max = null ) {
-	    $buckets = null;
+		$buckets = null;
 
-	    try {
-		    $buckets = $this->s3->listBuckets();
-	    } catch (S3Exception $e) {
-	        $this->generate_error($e);
-	        return;
-        }
+		try {
+			$buckets = $this->s3->listBuckets();
+		} catch (S3Exception $e) {
+			$this->generate_error($e);
+			return;
+		}
 
 		$results = array();
 
@@ -558,7 +558,7 @@ class EDD_Amazon_S3 {
 	 * @return array $files S3 Files.
 	 */
 	public function get_s3_files( $marker = null, $max = null ) {
-	    $results = null;
+		$results = null;
 
 		try {
 			$files = $this->s3->listObjects(  array(
@@ -1081,7 +1081,7 @@ class EDD_Amazon_S3 {
 	 * @param Aws\S3\Exception\S3Exception $e S3Exception.
 	 */
 	private function generate_error( $e ) {
-        echo '<div class="notice notice-error"><p><strong>' . __( 'AWS Error:', 'edd_s3' ) . '</strong> ' . $e->getAwsErrorMessage() . '</p></div>';
+		echo '<div class="notice notice-error"><p><strong>' . __( 'AWS Error:', 'edd_s3' ) . '</strong> ' . $e->getAwsErrorMessage() . '</p></div>';
 	}
 }
 
