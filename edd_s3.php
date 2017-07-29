@@ -214,7 +214,7 @@ class EDD_Amazon_S3 {
 	 * @return void
 	 */
 	public function outdated_php_version_notice() {
-		printf( '<div class="error"><p>' . __( 'Easy Digital Downloads - Amazon S3 requires PHP version 5.5.0 or higher. Your server is running PHP version %s.', 'edd_s3' ) . '</p></div>',
+		printf( '<div class="error"><p>' . __( 'Easy Digital Downloads - Amazon S3 requires PHP version 5.5.0 or higher. Your server is running PHP version %s. Please contact your hosting company to upgrade your site to 5.5.0 or later.', 'edd_s3' ) . '</p></div>',
 			PHP_VERSION
 		);
 	}
