@@ -113,7 +113,6 @@ class EDD_Amazon_S3 {
 		$this->secret_key     = isset( $edd_options['edd_amazon_s3_key'] )            ? trim( $edd_options['edd_amazon_s3_key'] )            : '';
 		$this->bucket         = isset( $edd_options['edd_amazon_s3_bucket'] )         ? trim( $edd_options['edd_amazon_s3_bucket'] )         : '';
 		$this->default_expiry = isset( $edd_options['edd_amazon_s3_default_expiry'] ) ? trim( $edd_options['edd_amazon_s3_default_expiry'] ) : '5';
-		$this->region         = isset( $edd_options['edd_amazon_s3_region'] )         ? trim( $edd_options['edd_amazon_s3_region'] )         : 'us-east-1';
 
 		$this->constants();
 		$this->load_textdomain();
@@ -121,7 +120,7 @@ class EDD_Amazon_S3 {
 
 		$this->s3 = new S3Client( array(
 			'version'     => '2006-03-01',
-			'region'      => $this->region,
+			'region'      => 'us-east-1', // Default region set to us-east-1
 			'credentials' => array(
 				'key'    => $this->access_id,
 				'secret' => $this->secret_key
@@ -532,9 +531,12 @@ class EDD_Amazon_S3 {
 
 		$results['buckets'] = array();
 		foreach ( $buckets['Buckets'] as $bucket ) {
+		    $location = $this->s3->getBucketLocation( array( 'Bucket' => $bucket['Name'] ) );
+
 			$results['buckets'][] = array(
-				'name' => $bucket['Name'],
-				'time' => strtotime( (string) $bucket['CreationDate'] )
+				'name'   => $bucket['Name'],
+				'time'   => strtotime( (string) $bucket['CreationDate'] ),
+				'region' => $location['LocationConstraint']
 			);
 		}
 
@@ -932,29 +934,6 @@ class EDD_Amazon_S3 {
 				'desc' => __( 'Set the host you wish to use. Leave default if you do not know what this is for', 'edd_s3' ),
 				'type' => 'text',
 				'std'  => 's3.amazonaws.com'
-			),
-			array(
-				'id'      => 'edd_amazon_s3_region',
-				'name'    => __( 'Amazon S3 Region', 'edd_s3' ),
-				'desc'    => __( 'Set the region of the Amaazon S3 host', 'edd_s3' ),
-				'type'    => 'select',
-				'options' => array(
-						'us-east-2'      => __( 'US East (Ohio)', 'edd_s3' ),
-						'us-east-1'      => __( 'US East (N. Virginia)', 'edd_s3' ),
-						'us-west-1'      => __( 'US West (N. California)', 'edd_s3' ),
-						'us-west-2'      => __( 'US West (Oregon)', 'edd_s3' ),
-						'ca-central-1'   => __( 'Canada (Central)', 'edd_s3' ),
-						'ap-south-1'     => __( 'Asia Pacific (Mumbai)', 'edd_s3' ),
-						'ap-northeast-2' => __( 'Asia Pacific (Seoul)', 'edd_s3' ),
-						'ap-southeast-1' => __( 'Asia Pacific (Singapore)', 'edd_s3' ),
-						'ap-southeast-2' => __( 'Asia Pacific (Sydney)', 'edd_s3' ),
-						'ap-northeast-1' => __( 'Asia Pacific (Tokyo)', 'edd_s3' ),
-						'eu-central-1'   => __( 'EU (Frankfurt)', 'edd_s3' ),
-						'eu-west-1'      => __( 'EU (Ireland)', 'edd_s3' ),
-						'eu-west-2'      => __( 'EU (London)', 'edd_s3' ),
-						'sa-east-1'      => __( 'South America (São Paulo)', 'edd_s3' ),
-				),
-				'std'  => 'us-east-1'
 			),
 			array(
 				'id'   => 'edd_amazon_s3_default_expiry',
