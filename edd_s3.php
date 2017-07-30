@@ -390,11 +390,14 @@ class EDD_Amazon_S3 {
 
 					echo '<table class="wp-list-table widefat fixed striped" style="max-height: 500px;overflow-y:scroll;">';
 
-						echo '<tr>';
-							echo '<th>' . __( 'Bucket name', 'edd_s3' ) . '</th>';
-							echo '<th>' . __( 'Actions', 'edd_s3' ) . '</th>';
-						echo '</tr>';
+						echo '<thead>';
+							echo '<tr>';
+								echo '<th>' . __( 'Bucket name', 'edd_s3' ) . '</th>';
+								echo '<th>' . __( 'Actions', 'edd_s3' ) . '</th>';
+							echo '</tr>';
+						echo '</thead>';
 
+						echo '<tbody>';
 						foreach ( $buckets as $key => $bucket ) {
 							echo '<tr>';
 								echo '<td>' . $bucket . '</td>';
@@ -402,8 +405,8 @@ class EDD_Amazon_S3 {
 									echo '<a href="' . esc_url( add_query_arg( 'bucket', $bucket ) ) . '">' . __( 'Browse', 'edd_s3' ) . '</a>';
 								echo '</td>';
 							echo '</tr>';
-
 						}
+						echo '</tbody>';
 					echo '</table>';
 				}
 
