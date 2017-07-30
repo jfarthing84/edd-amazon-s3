@@ -238,7 +238,7 @@ class EDD_Amazon_S3 {
 ?>
 		<style>
 		.edd_errors { -webkit-border-radius: 2px; -moz-border-radius: 2px; border-radius: 2px; border: 1px solid #E6DB55; margin: 0 0 21px 0; background: #FFFFE0; color: #333; }
-		.edd_errors p { margin: 10 15px; padding: 0 10px; }
+		.edd_errors p { margin: 10px 15px; padding: 0 10px; }
 		</style>
 		<script>
 		jQuery(document).ready(function($) {
