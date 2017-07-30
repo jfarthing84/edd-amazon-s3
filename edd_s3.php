@@ -66,16 +66,9 @@ class EDD_Amazon_S3 {
 	private $default_expiry;
 
 	/**
-	 * AWS S3 Region.
-	 *
-	 * @var string
-	 */
-	private $region;
-
-	/**
 	 * Instance of the S3Client.
 	 *
-	 * @var S3Client
+	 * @var \Aws\S3\S3Client
 	 */
 	private $s3;
 
