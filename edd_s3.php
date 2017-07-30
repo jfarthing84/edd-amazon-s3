@@ -422,22 +422,25 @@ class EDD_Amazon_S3 {
 
 					echo '<table class="wp-list-table widefat fixed striped" style="max-height: 500px;overflow-y:scroll;">';
 
-						echo '<tr>';
-							echo '<th>' . __( 'File name', 'edd_s3' ) . '</th>';
-							echo '<th>' . __( 'Actions', 'edd_s3' ) . '</th>';
-						echo '</tr>';
+                        echo '<thead>';
+                            echo '<tr>';
+                                echo '<th>' . __( 'File name', 'edd_s3' ) . '</th>';
+                                echo '<th>' . __( 'Actions', 'edd_s3' ) . '</th>';
+                            echo '</tr>';
+                        echo '</thead>';
 
+                        echo '<tbody>';
 						foreach ( $files as $key => $file ) {
+							if( $file['name'][ strlen( $file['name'] ) - 1 ] === '/' ) {
+								continue; // Don't show folders
+							}
+
 							echo '<tr>';
 								if( $i == 0)
 									$first_file = $key;
 
 								if( $i == 14 )
 									$last_file = $key;
-
-								if( $file['name'][ strlen( $file['name'] ) - 1 ] === '/' ) {
-									continue; // Don't show folders
-								}
 
 								echo '<td style="padding-right:20px;">' . $file['name'] . '</td>';
 								echo '<td>';
@@ -446,6 +449,7 @@ class EDD_Amazon_S3 {
 							echo '</tr>';
 							$i++;
 						}
+						echo '</tbody>';
 					echo '</table>';
 				}
 
