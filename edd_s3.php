@@ -251,7 +251,7 @@ class EDD_Amazon_S3 {
 			});
 		});
 		</script>
-		<div class="wrap">
+		<div style="margin: 20px 1em 1em; padding-right:20px;" class="wrap">
 <?php
 			if( ! $this->api_keys_entered() ) :
 ?>
