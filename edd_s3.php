@@ -53,6 +53,14 @@ class EDD_Amazon_S3 {
 			return;
 		}
 
+		if ( version_compare( '5.5.0', PHP_VERSION, '>' ) ) {
+			if ( is_admin() && ! defined( 'DOING_AJAX' ) ) {
+				add_action( 'admin_notices', array( $this, 'outdated_php_version_notice' ) );
+			}
+
+			return;
+		}
+
 		$this->access_id      = isset( $edd_options['edd_amazon_s3_id'] )             ? trim( $edd_options['edd_amazon_s3_id'] )             : '';
 		$this->secret_key     = isset( $edd_options['edd_amazon_s3_key'] )            ? trim( $edd_options['edd_amazon_s3_key'] )            : '';
 		$this->bucket         = isset( $edd_options['edd_amazon_s3_bucket'] )         ? trim( $edd_options['edd_amazon_s3_bucket'] )         : '';
@@ -195,6 +203,20 @@ class EDD_Amazon_S3 {
 		// Create download links for the CFM uploads
 		add_filter( 'cfm_file_download_url', array( $this, 'file_download_url' ), 10, 1 );
 
+	}
+
+	/**
+	 * Display Outdated PHP Version Notice.
+	 *
+	 * @access public
+	 * @since 2.3
+	 *
+	 * @return void
+	 */
+	public function outdated_php_version_notice() {
+		printf( '<div class="error"><p>' . __( 'Easy Digital Downloads - Amazon S3 requires PHP version 5.5.0 or higher. Your server is running PHP version %s. Please contact your hosting company to upgrade your site to 5.5.0 or later.', 'edd_s3' ) . '</p></div>',
+			PHP_VERSION
+		);
 	}
 
 	public function show_admin_notices() {
