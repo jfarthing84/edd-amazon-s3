@@ -336,7 +336,6 @@ class EDD_Amazon_S3 {
 
 	public function s3_library_tab( $type = 'file', $errors = null, $id = null ) {
 
-		media_upload_header();
 		wp_enqueue_style( 'media' );
 
 		$page     = isset( $_GET['p'] ) ? $_GET['p'] : 1;
