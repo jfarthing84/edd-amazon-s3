@@ -833,8 +833,12 @@ class EDD_Amazon_S3 {
 					continue;
 				}
 
-				$user   = get_userdata( get_current_user_id() );
-				$folder = trailingslashit( $user->user_login );
+				// $folder = trailingslashit( $user->user_login );
+
+				$user               = get_userdata( get_current_user_id() );
+				$folder_name_option = edd_get_option( 'edd_amazon_s3_fes_folder_name', 'user_nicename' );
+				$folder             =  ( 'user_nicename' == $folder_name_option ) ? trailingslashit( $user->user_nicename ) :  trailingslashit( $user->ID );
+
 				$args   = array(
 					'file' => get_attached_file( $attachment_id, false ),
 					'name' => $folder . basename( $file['name'] ),
