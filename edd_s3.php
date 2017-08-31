@@ -757,6 +757,19 @@ class EDD_Amazon_S3 {
 					'type' => 'text'
 		);
 
+		if ( class_exists( 'EDD_Front_End_Submissions' ) ) {
+			$s3_settings[] = array(
+				'id'      => 'edd_amazon_s3_fes_folder_name',
+				'name'    => __( 'Folder Name', 'edd_s3' ),
+				'desc'    => __( 'Folder name used when uploading to S3 from FES.', 'edd_s3' ),
+				'type'    => 'select',
+				'options' => array(
+					'user_nicename' => 'Username',
+					'user_ID'       => 'User ID'
+				),
+			);
+ 		}
+
 		if ( version_compare( EDD_VERSION, 2.5, '>=' ) ) {
 			$s3_settings = array( 'amazon_s3' => $s3_settings );
 		}
@@ -820,8 +833,12 @@ class EDD_Amazon_S3 {
 					continue;
 				}
 
-				$user   = get_userdata( get_current_user_id() );
-				$folder = trailingslashit( $user->user_login );
+				// $folder = trailingslashit( $user->user_login );
+
+				$user               = get_userdata( get_current_user_id() );
+				$folder_name_option = edd_get_option( 'edd_amazon_s3_fes_folder_name', 'user_nicename' );
+				$folder             =  ( 'user_nicename' == $folder_name_option ) ? trailingslashit( $user->user_nicename ) :  trailingslashit( $user->ID );
+
 				$args   = array(
 					'file' => get_attached_file( $attachment_id, false ),
 					'name' => $folder . basename( $file['name'] ),
