@@ -446,18 +446,24 @@ class EDD_Amazon_S3 {
 			<?php
 			if ( is_array( $buckets ) ) {
 				echo '<table class="wp-list-table widefat fixed striped" style="max-height: 500px;overflow-y:scroll;">';
-					echo '<tr>';
-						echo '<th>' . __( 'Bucket name', 'edd_s3' ) . '</th>';
-						echo '<th>' . __( 'Actions', 'edd_s3' ) . '</th>';
-					echo '</tr>';
-
-					foreach ( $buckets['buckets'] as $key => $bucket ) {
+					echo '<thead>';
 						echo '<tr>';
-							echo '<td>' . $bucket['name'] . '</td>';
-							echo '<td>';
-								echo '<a href="' . esc_url( add_query_arg( 'bucket', $bucket['name'] ) ) . '">' . __( 'Browse', 'edd_s3' ) . '</a>';
-							echo '</td>';
+							echo '<th>' . __( 'Bucket Name', 'edd_s3' ) . '</th>';
+							echo '<th>' . __( 'Owner', 'edd_s3' ) . '</th>';
+							echo '<th>' . __( 'Actions', 'edd_s3' ) . '</th>';
 						echo '</tr>';
+					echo '</thead>';
+
+					if ( count( $buckets['buckets'] ) > 0 ) {
+						echo '<tbody>';
+						foreach ( $buckets['buckets'] as $key => $bucket ) {
+							echo '<tr>';
+								echo '<td>' . $bucket['name'] . '</td>';
+								echo '<td>' . $buckets['owner']['name'] . '</td>';
+								echo '<td><a href="' . esc_url( add_query_arg( 'bucket', $bucket['name'] ) ) . '">' . __( 'Browse', 'edd_s3' ) . '</a></td>';
+							echo '</tr>';
+						 }
+						 echo '<tbody>';
 					}
 				echo '</table>';
 			}
@@ -471,31 +477,45 @@ class EDD_Amazon_S3 {
 				echo '<p><button class="button-secondary" onclick="history.back();">' . __( 'Go Back', 'edd_s3' ) . '</button></p>';
 
 				echo '<table class="wp-list-table widefat fixed striped" style="max-height: 500px;overflow-y:scroll;">';
-					echo '<tr>';
-						echo '<th>' . __( 'File name', 'edd_s3' ) . '</th>';
-						echo '<th>' . __( 'Actions', 'edd_s3' ) . '</th>';
-					echo '</tr>';
-
-					foreach ( $files as $key => $file ) {
+					echo '<thead>';
 						echo '<tr>';
-							if ( $i == 0 ) {
-								$first_file = $key;
-							}
-
-							if ( $i == 14 ) {
-								$last_file = $key;
-							}
-
-							if ( $file['name'][ strlen( $file['name'] ) - 1 ] === '/' ) {
-								continue; // Don't show folders
-							}
-
-							echo '<td style="padding-right:20px;">' . $file['name'] . '</td>';
-							echo '<td>';
-								echo '<a class="insert-s3 button-secondary" href="#" data-s3="' . esc_attr( $file['name'] ) . '">' . __( 'Use File', 'edd_s3' ) . '</a>';
-							echo '</td>';
+							echo '<th>' . __( 'File Name', 'edd_s3' ) . '</th>';
+							echo '<th>' . __( 'Size', 'edd_s3' ) . '</th>';
+							echo '<th>' . __( 'Last Modified', 'edd_s3' ) . '</th>';
+							echo '<th>' . __( 'Owner', 'edd_s3' ) . '</th>';
+							echo '<th>' . __( 'Actions', 'edd_s3' ) . '</th>';
 						echo '</tr>';
-						$i++;
+					echo '<thead>';
+
+					if ( $total_items > 0 ) {
+						echo '<tbody>';
+						foreach ( $files as $key => $file ) {
+							echo '<tr>';
+								if ( $i == 0 ) {
+									$first_file = $key;
+								}
+
+								if ( $i == 14 ) {
+									$last_file = $key;
+								}
+
+								if ( $file['name'][ strlen( $file['name'] ) - 1 ] === '/' ) {
+									continue; // Don't show folders
+								}
+
+								$sizes = array( 'bytes','KB','MB','GB' );
+								$factor = floor( strlen( $file['size'] - 1 ) / 3 );
+								$file_size = sprintf( '%.2f', $file['size'] / pow( 1024, $factor ) ) . ' ' . $sizes[ $factor ];
+
+								echo '<td>' . $file['name'] . '</td>';
+								echo '<td>' . $file_size . '</td>';
+								echo '<td>' . date( 'j M Y H:i:s', $file['time'] ) . '</td>';
+								echo '<td>' . $file['owner'] . '</td>';
+								echo '<td><a class="insert-s3 button-secondary" href="#" data-s3="' . esc_attr( $file['name'] ) . '">' . __( 'Use File', 'edd_s3' ) . '</a></td>';
+							echo '</tr>';
+							$i++;
+						}
+						echo '</tbody>';
 					}
 				echo '</table>';
 			}
@@ -585,10 +605,11 @@ class EDD_Amazon_S3 {
 			if ( isset( $files['Contents'] ) ) {
 				foreach ( $files['Contents'] as $file ) {
 					$results[ $file['Key'] ] = array(
-						'name' => $file['Key'],
-						'time' => strtotime( $file['LastModified'] ),
-						'size' => $file['Size'],
-						'hash' => substr( $file['ETag'], 1, -1 )
+						'name'          => $file['Key'],
+						'time'          => strtotime( $file['LastModified'] ),
+						'size'          => $file['Size'],
+						'hash'          => substr( $file['ETag'], 1, -1 ),
+						'owner'         => $file['Owner']['DisplayName']
 					);
 				}
 			}
