@@ -330,4 +330,53 @@ class FES_S3_Field extends FES_Field {
 		 */
 		return apply_filters( 'fes_sanitize_' . $this->template() . '_field', $values, $name, $save_id, $user_id );
 	}
+
+	/**
+	 * Save the field from the frontend; here we intercept the files uploaded from the
+	 *  frontend and upload to Amazon S3.
+	 *
+	 * @access public
+	 * @since  2.3
+	 *
+	 * @param array $value   Pre-validated return values.
+	 * @param int   $save_id Save ID.
+	 * @param int   $user_id User ID.
+	 */
+	public function save_field_frontend( $save_id = -2, $value = array(), $user_id = -2 ) {
+		if ( $user_id === -2 ) {
+			$user_id = get_current_user_id();
+		}
+
+		if ( $save_id == -2 ) {
+			$save_id = $this->save_id;
+		}
+
+		/**
+		 * Filter the User ID.
+		 *
+		 * @param int   $user_id User ID.
+		 * @param int   $save_id Save ID.
+		 * @param array $value   Input values.
+		 */
+		$user_id = apply_filters( 'fes_save_field_user_id_frontend', $user_id, $save_id, $value );
+
+		/**
+		 * Filter the save ID.
+		 *
+		 * @param array $value   Input values.
+		 * @param int   $user_id User ID.
+		 * @param int   $id      Field ID.
+		 */
+		$value = apply_filters( 'fes_save_field_value_frontend', $value, $save_id, $user_id );
+
+		do_action( 'fes_save_field_before_save_frontend', $save_id, $value, $user_id );
+
+		if ( ! is_array( $value ) ) {
+			return;
+		}
+
+		if ( 'post' === $this->type ) {
+
+		}
+	}
 }
