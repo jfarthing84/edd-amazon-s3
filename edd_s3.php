@@ -508,7 +508,7 @@ class EDD_Amazon_S3 {
 									$first_file = $key;
 								}
 
-								if ( $i == 14 ) {
+								if ( $i == 29 ) {
 									$last_file = $key;
 								}
 
@@ -545,7 +545,7 @@ class EDD_Amazon_S3 {
 						echo '<a class="page-numbers prev" href="' . esc_url( remove_query_arg( 'p', $base ) ) . '">' . __( 'Start Over', 'edd_s3' ) . '</a>';
 					}
 
-					if ( $i >= 10) {
+					if ( $i >= 29 ) {
 						echo '<a class="page-numbers next" href="' . esc_url( add_query_arg( array( 'p' => $page + 1, 'start' => $last_file ), $base ) ) . '">' . __( 'View More', 'edd_s3' ) . '</a>';
 					}
 				echo '</div>';
