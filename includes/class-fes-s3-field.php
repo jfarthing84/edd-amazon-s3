@@ -265,8 +265,10 @@ class FES_S3_Field extends FES_Field {
 			if ( ! empty( $values[ $name ] ) ) {
 				if ( is_array( $values[ $name ] ) ) {
 					foreach ( $values[ $name ] as $key => $file ) {
+						/**
+						 * We ensure that we can pass the FILTER_VALIDATE_URL validation at this stage as the file gets uploaded to S3 on save.
+						 */
 						if ( filter_var( $file, FILTER_VALIDATE_URL ) === false ) {
-							// if that's not a url
 							$return_value = __( 'Please enter a valid URL.', 'edd_s3' );
 							break;
 						} else {
