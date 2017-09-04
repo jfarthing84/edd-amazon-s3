@@ -540,13 +540,13 @@ class EDD_Amazon_S3 {
 			}
 
 			echo '<div class="s3-pagination tablenav">';
-				echo '<div class="tablenav-pages alignright">';
+				echo '<div class="alignleft">';
 					if ( isset( $_GET['p'] ) && $_GET['p'] > 1 ) {
-						echo '<a class="page-numbers prev" href="' . esc_url( remove_query_arg( 'p', $base ) ) . '">' . __( 'Start Over', 'edd_s3' ) . '</a>';
+						echo '<a class="button-secondary prev" href="' . esc_url( remove_query_arg( 'p', $base ) ) . '">' . __( 'Start Over', 'edd_s3' ) . '</a>';
 					}
 
 					if ( $i >= 29 ) {
-						echo '<a class="page-numbers next" href="' . esc_url( add_query_arg( array( 'p' => $page + 1, 'start' => $last_file ), $base ) ) . '">' . __( 'View More', 'edd_s3' ) . '</a>';
+						echo '<a class="button-secondary next" href="' . esc_url( add_query_arg( array( 'p' => $page + 1, 'start' => $last_file ), $base ) ) . '">' . __( 'View More', 'edd_s3' ) . '</a>';
 					}
 				echo '</div>';
 			echo '</div>';
