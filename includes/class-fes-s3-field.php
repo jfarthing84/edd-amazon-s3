@@ -162,13 +162,13 @@ class FES_S3_Field extends FES_Field {
 
 		ob_start(); ?>
 		<div class="fes-fields">
-			<table class="<?php echo sanitize_key( $this->name() ); ?>">
+			<table class="multiple <?php echo sanitize_key( $this->name() ); ?>">
 				<thead>
 				<tr>
-					<th class="fes-file-column" colspan="2"><?php _e( 'File URL', 'edd_fes' ); ?></th>
+					<th class="fes-file-column" colspan="2"><?php _e( 'File URL', 'edd_s3' ); ?></th>
 					<?php if ( fes_is_admin() ) { ?>
 						<th class="fes-download-file">
-							<?php _e( 'Download File', 'edd_fes' ); ?>
+							<?php _e( 'Download File', 'edd_s3' ); ?>
 						</th>
 					<?php } ?>
 					<?php if ( empty( $this->characteristics['single'] ) || $this->characteristics['single'] !== 'yes' ) { ?>
@@ -181,15 +181,15 @@ class FES_S3_Field extends FES_Field {
 				foreach ( $uploaded_items as $index => $attach_id ) {
 					$download = wp_get_attachment_url( $attach_id ); ?>
 					<tr class="fes-single-variation">
-						<td class="fes-url-row">
-							<input type="text" class="fes-file-value" data-formid="<?php echo $this->form; ?>" data-fieldname="<?php echo $this->name(); ?>" placeholder="<?php _e( "http://", 'edd_fes' ); ?>" name="<?php echo $this->name(); ?>[<?php echo esc_attr( $index ); ?>]" value="<?php echo esc_attr( $download ); ?>" />
+						<td width="80%" class="fes-url-row">
+							<input type="text" class="fes-file-value" data-formid="<?php echo $this->form; ?>" data-fieldname="<?php echo $this->name(); ?>" placeholder="<?php _e( 'http://', 'edd_s3' ); ?>" name="<?php echo $this->name(); ?>[<?php echo esc_attr( $index ); ?>]" value="<?php echo esc_attr( $download ); ?>" />
 						</td>
 						<td class="fes-url-choose-row">
-							<a href="#" class="edd-submit button upload_file_button" data-choose="<?php _e( 'Choose file', 'edd_fes' ); ?>" data-update="<?php _e( 'Insert file URL', 'edd_fes' ); ?>"><?php echo str_replace( ' ', '&nbsp;', __( 'Choose file', 'edd_fes' ) ); ?></a>
+							<a href="#" class="edd-submit button upload_file_button" data-choose="<?php _e( 'Choose file', 'edd_s3' ); ?>" data-update="<?php _e( 'Insert file URL', 'edd_s3' ); ?>"><?php echo str_replace( ' ', '&nbsp;', __( 'Choose file', 'edd_s3' ) ); ?></a>
 						</td>
 						<td width="1%" class="fes-delete-row">
 							<a href="#" class="edd-fes-delete delete">
-								<?php _e( '&times;', 'edd_fes' ); ?></a>
+								<?php _e( '&times;', 'edd_s3' ); ?></a>
 						</td>
 					</tr>
 				<?php } ?>
@@ -199,7 +199,7 @@ class FES_S3_Field extends FES_Field {
 					<tfoot>
 					<tr>
 						<th colspan="5">
-							<a href="#" class="edd-submit button insert-file-row" id="<?php echo sanitize_key( $this->name() ); ?>"><?php _e( 'Add File', 'edd_fes' ); ?></a>
+							<a href="#" class="edd-submit button insert-file-row" id="<?php echo sanitize_key( $this->name() ); ?>"><?php _e( 'Add File', 'edd_s3' ); ?></a>
 						</th>
 					</tr>
 					</tfoot>
@@ -264,7 +264,17 @@ class FES_S3_Field extends FES_Field {
 		if ( $this->required() ) {
 			if ( ! empty( $values[ $name ] ) ) {
 				if ( is_array( $values[ $name ] ) ) {
-
+					foreach ( $values[ $name ] as $key => $file ) {
+						if ( filter_var( $file, FILTER_VALIDATE_URL ) === false ) {
+							// if that's not a url
+							$return_value = __( 'Please enter a valid URL.', 'edd_s3' );
+							break;
+						} else {
+							if ( ! edd_is_local_file( $file ) ) {
+								$return_value = __( 'Files must be uploaded through the upload form.', 'edd_s3' );
+							}
+						}
+					}
 				} else {
 					$return_value = __( 'Please fill out this field.', 'edd_s3' );
 				}
