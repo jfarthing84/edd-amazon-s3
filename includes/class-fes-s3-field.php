@@ -2,6 +2,15 @@
 
 class FES_S3_Field extends FES_Field {
 	/**
+	 * Field Version.
+	 *
+	 * @access public
+	 * @since  2.3
+	 * @var    string
+	 */
+	public $version = '1.0.0';
+
+	/**
 	 * For 3rd parameter of get_post/user_meta.
 	 *
 	 * @access public
@@ -12,7 +21,7 @@ class FES_S3_Field extends FES_Field {
 
 	/**
 	 * Supports are things that are the same for all fields of a field type.
-	 * E.g. whether or not a field type supports jQuery Phoenix. Stored in obj, not db.
+	 * E.g. whether or not a field type supports jQuery Phoenix. Stored in object, not database.
 	 *
 	 * @access public
 	 * @since  2.3
@@ -20,7 +29,7 @@ class FES_S3_Field extends FES_Field {
 	 */
 	public $supports = array(
 		'multiple'    => false,
-		'is_meta'     => true,  // in object as public (bool) $meta;
+		'is_meta'     => true,
 		'forms'       => array(
 			'registration'     => false,
 			'submission'       => true,
@@ -35,7 +44,7 @@ class FES_S3_Field extends FES_Field {
 			'can_add_to_formbuilder'      => true,
 		),
 		'template'	  => 'edd_s3_upload',
-		'title'       => 'Amazon S3 Upload', // l10n on output
+		'title'       => 'Amazon S3 Upload',
 		'phoenix'	   => false,
 	);
 
@@ -48,10 +57,10 @@ class FES_S3_Field extends FES_Field {
 	 */
 	public $characteristics = array(
 		'name'        => '',
-		'template'	  => 'edd_s3_upload',
+		'template'    => 'edd_s3_upload',
 		'public'      => true,
 		'required'    => false,
-		'label'       => 'Amazon S3 Upload',
+		'label'       => '',
 		'css'         => '',
 		'default'     => '',
 		'size'        => '',
@@ -96,11 +105,6 @@ class FES_S3_Field extends FES_Field {
 		$readonly  = apply_filters( 'fes_render_s3_upload_field_readonly_admin', $readonly, $user_id, $this->id );
 		$value     = $this->get_field_value_admin( $this->save_id, $user_id, $readonly );
 
-		$single = false;
-		if ( $this->type == 'submission' ) {
-			$single = true;
-		}
-
 		$uploaded_items = $value;
 		if ( ! is_array( $uploaded_items ) || empty( $uploaded_items ) ) {
 			$uploaded_items = array( 0 => '' );
@@ -117,9 +121,58 @@ class FES_S3_Field extends FES_Field {
 
 		ob_start(); ?>
 		<div class="fes-fields">
+			<table class="<?php echo sanitize_key( $this->name() ); ?>">
+				<thead>
+					<tr>
+						<td class="fes-s3-path" colspan="2"><?php _e( 'S3 Path', 'edd_s3' ); ?></td>
+						<?php if ( fes_is_admin() ) { ?>
+							<td class="fes-download-file"><?php _e( 'Download File', 'edd_s3' ); ?></td>
+						<?php } ?>
+
+						<?php if ( empty( $this->characteristics['single'] ) || $this->characteristics['single'] !== 'yes' ) { ?>
+							 <td class="fes-remove-column">&nbsp;</td>
+						<?php } ?>
+					 </tr>
+				</thead>
+				<tbody class="fes-variations-list-<?php echo sanitize_key( $this->name() ); ?>">
+					<input type="hidden" id="fes-upload-max-files-<?php echo sanitize_key( $this->name() ); ?>" value="<?php echo $max_files; ?>" />
+					<?php foreach ( $uploaded_items as $index => $s3_file ) { ?>
+					<tr class="fes-single-variation">
+						<td class="fes-url-row">
+							<input type="text" class="fes-file-value" data-formid="<?php echo $this->form;?>" data-fieldname="<?php echo $this->name();?>" name="<?php echo $this->name(); ?>[<?php echo esc_attr( $index ); ?>]" value="<?php echo esc_attr( $s3_file ); ?>" />
+						 </td>
+
+						 <td class="fes-url-choose-row" width="1%">
+							<a href="#" class="edd-submit button upload_file_button" data-choose="<?php _e( 'Choose file', 'edd_fes' ); ?>" data-update="<?php _e( 'Insert file URL', 'edd_fes' ); ?>"><?php echo str_replace( ' ', '&nbsp;', __( 'Choose file', 'edd_fes' ) ); ?></a>
+						 </td>
+
+						 <td>
+
+						 </td>
+
+						<?php if ( empty( $this->characteristics['single'] ) || $this->characteristics['single'] !== 'yes' ) { ?>
+							 <td width="1%" class="fes-delete-row">
+							 	<a href="#" class="edd-fes-delete delete"><?php _e( '&times;', 'edd_s3' ); ?></a>
+							 </td>
+						<?php } ?>
+					</tr>
+					<?php } ?>
+					<tr class="add_new" style="display:none !important;" id="<?php echo sanitize_key( $this->name() ); ?>"></tr>
+				</tbody>
+				<?php if ( empty( $this->characteristics['count'] ) || $this->characteristics['count'] > 1 ) { ?>
+				<tfoot>
+					<tr>
+						<th colspan="5">
+							<a href="#" class="edd-submit button insert-file-row" id="<?php echo sanitize_key( $this->name() ); ?>"><?php _e( 'Add File', 'edd_fes' ); ?></a>
+						</th>
+					</tr>
+				</tfoot>
+				<?php } ?>
+			</table>
 		</div>
 		<?php
 		$output .= ob_get_clean();
+		$output .= '</div>';
 		return $output;
 	}
 
@@ -169,7 +222,23 @@ class FES_S3_Field extends FES_Field {
 	 * @return bool|string $return_value False, or error otherwise.
 	 */
 	public function validate( $values = array(), $save_id = -2, $user_id = -2 ) {
+		$name = $this->name();
 
+		$return_value = false;
+
+		if ( $this->required() ) {
+			if ( ! empty( $values[ $name ] ) ) {
+				if ( is_array( $values[ $name ] ) ) {
+
+				} else {
+					$return_value = __( 'Please fill out this field.', 'edd_s3' );
+				}
+			} else {
+				$return_value = __( 'Please fill out this field.', 'edd_s3' );
+			}
+		}
+
+		return apply_filters( 'fes_validate_' . $this->template() . '_field', $return_value, $values, $name, $save_id, $user_id );
 	}
 
 	/**
