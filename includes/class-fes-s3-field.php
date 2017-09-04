@@ -134,7 +134,27 @@ class FES_S3_Field extends FES_Field {
 	 * @return string         HTML to render field in Form Builder.
 	 */
 	public function render_formbuilder_field( $index = -2, $insert = false ) {
+		$removable       = $this->can_remove_from_formbuilder();
+		$max_files_name  = sprintf( '%s[%d][count]', 'fes_input', $index );
+		$max_files_value = $this->characteristics['count'];
+		$count           = esc_attr( __( 'Number of files which can be uploaded.', 'edd_s3' ) );
+		ob_start(); ?>
+		<li class="custom-field custom_image">
+			<?php $this->legend( $this->title(), $this->get_label(), $removable ); ?>
+			<?php FES_Formbuilder_Templates::hidden_field( "[$index][template]", $this->template() ); ?>
 
+			<?php FES_Formbuilder_Templates::field_div( $index, $this->name(), $this->characteristics, $insert ); ?>
+					<?php FES_Formbuilder_Templates::public_radio( $index, $this->characteristics, $this->form_name ); ?>
+					<?php FES_Formbuilder_Templates::standard( $index, $this ); ?>
+
+					<div class="fes-form-rows">
+						<label><?php _e( 'Maximum number of files', 'edd_fes' ); ?></label>
+						<input type="text" class="smallipopInput" name="<?php echo esc_html( $max_files_name ); ?>" value="<?php echo esc_html( $max_files_value ); ?>" title="<?php echo esc_html( $count ); ?>">
+					</div>
+			</div>
+		</li>
+		<?php
+		return ob_get_clean();
 	}
 
 	/**
