@@ -442,7 +442,7 @@ class EDD_Amazon_S3 {
 		endif;
 
 		if ( ! $bucket ) { ?>
-			<h3 class="media-title"><?php _e('Select a Bucket', 'edd_s3'); ?></h3>
+			<h3 class="media-title"><?php _e( 'Select a Bucket', 'edd_s3' ); ?></h3>
 			<?php
 			if ( is_array( $buckets ) ) {
 				echo '<table class="wp-list-table widefat fixed striped" style="max-height: 500px;overflow-y:scroll;">';
@@ -462,10 +462,19 @@ class EDD_Amazon_S3 {
 								echo '<td>' . $buckets['owner']['name'] . '</td>';
 								echo '<td><a href="' . esc_url( add_query_arg( 'bucket', $bucket['name'] ) ) . '">' . __( 'Browse', 'edd_s3' ) . '</a></td>';
 							echo '</tr>';
-						 }
-						 echo '<tbody>';
-					}
-				echo '</table>';
+						}
+						echo '</tbody>';
+					echo '</table>';
+				}
+			} else {
+				$back = admin_url( 'media-upload.php?post_id=' . absint( $_GET['post_id'] ) );
+
+				if ( is_array( $files ) ) {
+					$i = 0;
+					$total_items = count( $files );
+
+					echo '<p><button class="button-secondary" onclick="history.back();">' . __( 'Go Back', 'edd_s3' ) . '</button></p>';
+				}
 			}
 		} else {
 			$back = admin_url( 'media-upload.php?post_id=' . absint( $_GET['post_id'] ) );
@@ -473,7 +482,6 @@ class EDD_Amazon_S3 {
 			if ( is_array( $files ) ) {
 				$i = 0;
 				$total_items = count( $files );
-
 				echo '<p><button class="button-secondary" onclick="history.back();">' . __( 'Go Back', 'edd_s3' ) . '</button></p>';
 
 				echo '<table class="wp-list-table widefat fixed striped" style="max-height: 500px;overflow-y:scroll;">';
@@ -485,11 +493,16 @@ class EDD_Amazon_S3 {
 							echo '<th>' . __( 'Owner', 'edd_s3' ) . '</th>';
 							echo '<th>' . __( 'Actions', 'edd_s3' ) . '</th>';
 						echo '</tr>';
-					echo '<thead>';
+					echo '</thead>';
 
 					if ( $total_items > 0 ) {
 						echo '<tbody>';
+
 						foreach ( $files as $key => $file ) {
+							if( $file['name'][ strlen( $file['name'] ) - 1 ] === '/' ) {
+								continue; // Don't show folders
+							}
+
 							echo '<tr>';
 								if ( $i == 0 ) {
 									$first_file = $key;
@@ -516,8 +529,8 @@ class EDD_Amazon_S3 {
 							$i++;
 						}
 						echo '</tbody>';
-					}
-				echo '</table>';
+					echo '</table>';
+				}
 			}
 
 			$base = admin_url( 'media-upload.php?post_id=' . absint( $_GET['post_id'] ) . '&tab=s3_library' );
@@ -527,13 +540,13 @@ class EDD_Amazon_S3 {
 			}
 
 			echo '<div class="s3-pagination tablenav">';
-				echo '<div class="tablenav-pages alignright">';
+				echo '<div class="alignleft">';
 					if ( isset( $_GET['p'] ) && $_GET['p'] > 1 ) {
-						echo '<a class="page-numbers prev" href="' . esc_url( remove_query_arg( 'p', $base ) ) . '">' . __( 'Start Over', 'edd_s3' ) . '</a>';
+						echo '<a class="button-secondary prev" href="' . esc_url( remove_query_arg( 'p', $base ) ) . '">' . __( 'Start Over', 'edd_s3' ) . '</a>';
 					}
 
 					if ( $i >= 29 ) {
-						echo '<a class="page-numbers next" href="' . esc_url( add_query_arg( array( 'p' => $page + 1, 'start' => $last_file ), $base ) ) . '">' . __( 'View More', 'edd_s3' ) . '</a>';
+						echo '<a class="button-secondary next" href="' . esc_url( add_query_arg( array( 'p' => $page + 1, 'start' => $last_file ), $base ) ) . '">' . __( 'View More', 'edd_s3' ) . '</a>';
 					}
 				echo '</div>';
 			echo '</div>';
