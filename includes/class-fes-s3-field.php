@@ -164,6 +164,14 @@ class FES_S3_Field extends FES_Field {
 	 * @return array $return_value Sanitized input data.
 	 */
 	public function sanitize( $values = array(), $save_id = -2, $user_id = -2 ) {
-
+		$name = $this->name();
+		if ( ! empty( $values[ $name ] ) ) {
+			if ( is_array( $values[ $name ] ) ){
+				foreach( $values[ $name ] as $key => $option  ){
+					$values[ $name ][ $key ] = sanitize_text_field( trim( $values[ $name ][ $key ] ) );
+				}
+			}
+		}
+		return apply_filters( 'fes_sanitize_' . $this->template() . '_field', $values, $name, $save_id, $user_id );
 	}
 }
