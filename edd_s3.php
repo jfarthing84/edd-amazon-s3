@@ -1137,6 +1137,34 @@ class EDD_Amazon_S3 {
 	private function generate_error( $e ) {
 		echo '<div class="notice notice-error"><p><strong>' . __( 'AWS Error:', 'edd_s3' ) . '</strong> ' . $e->getAwsErrorMessage() . '</p></div>';
 	}
+
+	/**
+	 * Integration with Frontend Submissions.
+	 *
+	 * @access public
+	 * @since  2.3
+	 */
+	public static function add_fes_functionality() {
+		if ( class_exists( 'EDD_Front_End_Submissions' ) && version_compare( fes_plugin_version, '2.3', '>=' ) ) {
+			include_once( EDD_AS3_DIR . 'includes/class-fes-s3-field.php' );
+
+			add_filter( 'fes_load_fields_array', 'EDD_Amazon_S3::add_fes_field', 10, 1 );
+		}
+	}
+
+	/**
+	 * Register Frontend Submissions Field.
+	 *
+	 * @access public
+	 * @since  2.3
+	 *
+	 * @param  array $fields FES fFields.
+	 * @return array $fields FES fields with S3 field registered.
+	 */
+	public static function add_fes_field( $fields ){
+		$fields['edd_s3_upload'] = 'FES_S3_Field';
+		return $fields;
+	}
 }
 
 /**
@@ -1146,5 +1174,8 @@ class EDD_Amazon_S3 {
  */
 function edd_s3_load() {
 	$GLOBALS['edd_s3'] = EDD_Amazon_S3::get_instance();
+
+	// FES Integration
+	add_action( 'fes_load_fields_require', 'EDD_Amazon_S3::add_fes_functionality' );
 }
 add_action( 'plugins_loaded', 'edd_s3_load' );
