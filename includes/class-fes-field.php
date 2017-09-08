@@ -432,9 +432,6 @@ class EDD_Amazon_S3_FES_Field extends FES_Field {
 			$save_id = $this->save_id;
 		}
 
-		var_dump($this);
-		die;
-
 		/**
 		 * Filter the User ID.
 		 *
