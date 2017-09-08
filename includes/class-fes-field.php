@@ -13,11 +13,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * FES_S3_Field Class.
+ * EDD_Amazon_S3_FES_Field Class.
  *
  * @since 2.3
  *
- * @see FES_Field
+ * @see   FES_Field
  */
 class EDD_Amazon_S3_FES_Field extends FES_Field {
 
@@ -111,7 +111,89 @@ class EDD_Amazon_S3_FES_Field extends FES_Field {
 	 * @return string HTML to render field in admin.
 	 */
 	public function render_field_admin( $user_id = -2, $readonly = -2 ) {
-		return '';
+		if ( $user_id === -2 ) {
+			$user_id = get_current_user_id();
+		}
+
+		if ( $readonly === -2 ) {
+			$readonly = $this->readonly;
+		}
+
+		/**
+		 * Filter the User ID.
+		 *
+		 * @param int $user_id User ID.
+		 * @param int $id      Field ID.
+		 */
+		$user_id = apply_filters( 'fes_render_edd_s3_field_user_id_admin', $user_id, $this->id );
+
+		/**
+		 * Filter the `readonly` value.
+		 *
+		 * @param bool $readonly Whether the field is readonly or not.
+		 * @param int  $user_id  User ID.
+		 * @param int  $id       Field ID.
+		 */
+		$readonly = apply_filters( 'fes_render_edd_s3_field_readonly_admin', $readonly, $user_id, $this->id );
+
+		$value = $this->get_field_value_admin( $this->save_id, $user_id, $readonly );
+
+		if ( ! is_array( $value ) || empty( $value ) ) {
+			$value = array( 0 => '' );
+		}
+
+		$output = '';
+		$output .= sprintf( '<div class="fes-el %1s %2s %3s">', $this->template(), $this->name(), $this->css() );
+		$output .= $this->label( $readonly );
+
+		ob_start(); ?>
+		<div class="fes-fields">
+			<table class="multiple <?php echo sanitize_key( $this->name() ); ?>">
+				<thead>
+					<tr>
+						<th width="60%" class="fes-file-column"><?php _e( 'File URL', 'edd_s3' ); ?></th>
+						<?php if ( fes_is_admin() ) { ?>
+							<th width="33%" class="fes-download-file">
+								<?php _e( 'Download File', 'edd_s3' ); ?>
+							</th>
+						<?php } ?>
+						<th width="1%" class="fes-remove-column">&nbsp;</th>
+					</tr>
+				</thead>
+				<tbody class="fes-variations-list-<?php echo sanitize_key( $this->name() ); ?>">
+				<?php foreach ( $value as $key => $url ) { ?>
+					<tr class="fes-single-variation">
+						<td width="60%" class="fes-url-row">
+							<input type="text" class="fes-file-value" data-formid="<?php echo $this->form; ?>" data-fieldname="<?php echo $this->name(); ?>" placeholder="<?php _e( 'http://', 'edd_s3' ); ?>" name="<?php echo $this->name(); ?>[<?php echo esc_attr( $key ); ?>]" value="<?php echo esc_attr( $url ); ?>" />
+						</td>
+						<td width="33%" class="fes-url-row">
+							<?php
+							if ( ! empty( $url ) ) {
+								echo edd_amazon_s3()->get_s3_url( $url );
+							}
+							?>
+						</td>
+						<td width="1%" class="fes-delete-row">
+							<a href="#" class="edd-fes-delete delete"><?php _e( '&times;', 'edd_s3' ); ?></a>
+						</td>
+					</tr>
+				<?php } ?>
+				<tr class="add_new" style="display:none !important;" id="<?php echo sanitize_key( $this->name() ); ?>"></tr>
+				</tbody>
+				<?php if ( empty( $this->characteristics['count'] ) || $this->characteristics['count'] > 1 ) { ?>
+				<tfoot>
+					<tr>
+						<th colspan="5"><a href="#" class="edd-submit button insert-file-row" id="<?php echo sanitize_key( $this->name() ); ?>"><?php _e( 'Add File', 'edd_s3' ); ?></a></th>
+					</tr>
+				</tfoot>
+				<?php } ?>
+			</table>
+		</div>
+		<?php
+		$output .= ob_get_clean();
+		$output .= '</div>';
+
+		return $output;
 	}
 
 	/**
@@ -153,9 +235,8 @@ class EDD_Amazon_S3_FES_Field extends FES_Field {
 
 		$value = $this->get_field_value_admin( $this->save_id, $user_id, $readonly );
 
-		$uploaded_items = $value;
-		if ( ! is_array( $uploaded_items ) || empty( $uploaded_items ) ) {
-			$uploaded_items = array( 0 => '' );
+		if ( ! is_array( $value ) || empty( $value ) ) {
+			$value = array( 0 => '' );
 		}
 
 		$output = '';
@@ -167,45 +248,42 @@ class EDD_Amazon_S3_FES_Field extends FES_Field {
 			<table class="multiple <?php echo sanitize_key( $this->name() ); ?>">
 				<thead>
 				<tr>
-					<th class="fes-file-column" colspan="2"><?php _e( 'File URL', 'edd_s3' ); ?></th>
+					<th width="60%" class="fes-file-column"><?php _e( 'File URL', 'edd_s3' ); ?></th>
 					<?php if ( fes_is_admin() ) { ?>
-						<th class="fes-download-file">
+						<th width="33%" class="fes-download-file">
 							<?php _e( 'Download File', 'edd_s3' ); ?>
 						</th>
 					<?php } ?>
-					<?php if ( empty( $this->characteristics['single'] ) || $this->characteristics['single'] !== 'yes' ) { ?>
-						<th class="fes-remove-column">&nbsp;</th>
-					<?php } ?>
+					<th width="1%" class="fes-remove-column">&nbsp;</th>
 				</tr>
 				</thead>
 				<tbody class="fes-variations-list-<?php echo sanitize_key( $this->name() ); ?>">
-				<?php
-				foreach ( $uploaded_items as $index => $attach_id ) {
-					$download = wp_get_attachment_url( $attach_id ); ?>
+				<?php foreach ( $value as $key => $url ) { ?>
 					<tr class="fes-single-variation">
-						<td width="80%" class="fes-url-row">
-							<input type="text" class="fes-file-value" data-formid="<?php echo $this->form; ?>" data-fieldname="<?php echo $this->name(); ?>" placeholder="<?php _e( 'http://', 'edd_s3' ); ?>" name="<?php echo $this->name(); ?>[<?php echo esc_attr( $index ); ?>]" value="<?php echo esc_attr( $download ); ?>" />
+						<td width="60%" class="fes-url-row">
+							<input type="text" class="fes-file-value" data-formid="<?php echo $this->form; ?>" data-fieldname="<?php echo $this->name(); ?>" placeholder="<?php _e( 'http://', 'edd_s3' ); ?>" name="<?php echo $this->name(); ?>[<?php echo esc_attr( $key ); ?>]" value="<?php echo esc_attr( $url ); ?>" />
 						</td>
-						<td class="fes-url-choose-row">
-							<a href="#" class="edd-submit button upload_file_button" data-choose="<?php _e( 'Choose file', 'edd_s3' ); ?>" data-update="<?php _e( 'Insert file URL', 'edd_s3' ); ?>"><?php echo str_replace( ' ', '&nbsp;', __( 'Choose file', 'edd_s3' ) ); ?></a>
+						<td width="33%" class="fes-url-row">
+							<?php
+							if ( ! empty( $url ) ) {
+								echo edd_amazon_s3()->get_s3_url( $url );
+							}
+							?>
 						</td>
 						<td width="1%" class="fes-delete-row">
-							<a href="#" class="edd-fes-delete delete">
-								<?php _e( '&times;', 'edd_s3' ); ?></a>
+							<a href="#" class="edd-fes-delete delete"><?php _e( '&times;', 'edd_s3' ); ?></a>
 						</td>
 					</tr>
 				<?php } ?>
 				<tr class="add_new" style="display:none !important;" id="<?php echo sanitize_key( $this->name() ); ?>"></tr>
 				</tbody>
-				<?php if ( empty( $this->characteristics['count'] ) || $this->characteristics['count'] > 1 ) : ?>
+				<?php if ( empty( $this->characteristics['count'] ) || $this->characteristics['count'] > 1 ) { ?>
 					<tfoot>
 					<tr>
-						<th colspan="5">
-							<a href="#" class="edd-submit button insert-file-row" id="<?php echo sanitize_key( $this->name() ); ?>"><?php _e( 'Add File', 'edd_s3' ); ?></a>
-						</th>
+						<th colspan="5"><a href="#" class="edd-submit button insert-file-row" id="<?php echo sanitize_key( $this->name() ); ?>"><?php _e( 'Add File', 'edd_s3' ); ?></a></th>
 					</tr>
 					</tfoot>
-				<?php endif; ?>
+				<?php } ?>
 			</table>
 		</div>
 		<?php
@@ -353,6 +431,9 @@ class EDD_Amazon_S3_FES_Field extends FES_Field {
 		if ( $save_id == -2 ) {
 			$save_id = $this->save_id;
 		}
+
+		var_dump($this);
+		die;
 
 		/**
 		 * Filter the User ID.

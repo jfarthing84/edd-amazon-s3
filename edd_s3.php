@@ -1191,7 +1191,7 @@ final class EDD_Amazon_S3 {
 	 * @return array $fields FES fields with S3 field registered.
 	 */
 	public static function add_fes_field( $fields ) {
-		$fields['edd_s3'] = 'EDD_Amazon_S3_FES_S3_Field';
+		$fields['edd_s3'] = 'EDD_Amazon_S3_FES_Field';
 
 		return $fields;
 	}
