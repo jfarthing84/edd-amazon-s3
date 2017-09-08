@@ -22,7 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 // Include the AWS SDK using the Composer autoloader.
 require 'aws-sdk/aws-autoloader.php';
 
-use Aws\S3\S3Client;
+use Aws\S3\S3MultiRegionClient;
 use Aws\S3\Exception\S3Exception;
 
 if ( ! class_exists( 'EDD_Amazon_S3' ) ) :
@@ -128,7 +128,7 @@ final class EDD_Amazon_S3 {
 		$this->load_textdomain();
 		$this->init();
 
-		$this->s3 = new \Aws\S3\S3MultiRegionClient( array(
+		$this->s3 = new S3MultiRegionClient( array(
 			'version'           => '2006-03-01',
 			'credentials'       => array(
 				'key'    => $this->access_id,
