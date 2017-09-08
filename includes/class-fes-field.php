@@ -372,6 +372,15 @@ class EDD_Amazon_S3_FES_Field extends FES_Field {
 		 */
 		$value = apply_filters( 'fes_save_field_value_frontend', $value, $save_id, $user_id );
 
+		/**
+		 * Run before any save actions occur.
+		 *
+		 * @since 2.3
+		 *
+		 * @param int   $save_id Save ID.
+		 * @param array $value   Pre-defined return values.
+		 * @param int   $user_id User ID.
+		 */
 		do_action( 'fes_save_field_before_save_frontend', $save_id, $value, $user_id );
 
 		if ( ! is_array( $value ) ) {
@@ -416,5 +425,16 @@ class EDD_Amazon_S3_FES_Field extends FES_Field {
 				}
 			}
 		}
+
+		/**
+		 * Run after all save actions occur.
+		 *
+		 * @since 2.3
+		 *
+		 * @param int   $save_id Save ID.
+		 * @param array $value   Pre-defined return values.
+		 * @param int   $user_id User ID.
+		 */
+		do_action( 'fes_save_field_after_save_frontend', $save_id, $value, $user_id );
 	}
 }
