@@ -574,9 +574,8 @@ final class EDD_Amazon_S3 {
 		try {
 			$buckets = $this->s3->listBuckets();
 		} catch ( S3Exception $e ) {
-			$this->generate_error( $e );
-
-			return;
+			echo $this->generate_error( $e );
+			return array();
 		}
 
 		$results = array();
@@ -643,8 +642,7 @@ final class EDD_Amazon_S3 {
 
 			return $results;
 		} catch ( S3Exception $e ) {
-			$this->generate_error( $e );
-
+			echo $this->generate_error( $e );
 			return array();
 		}
 	}
@@ -765,7 +763,6 @@ final class EDD_Amazon_S3 {
 			return true;
 		} catch ( S3Exception $e ) {
 			echo $this->generate_error( $e );
-
 			return false;
 		}
 	}
@@ -1164,9 +1161,11 @@ final class EDD_Amazon_S3 {
 	 * @since  2.3
 	 *
 	 * @param Aws\S3\Exception\S3Exception $e S3Exception.
+	 *
+	 * @return string Error message.
 	 */
 	private function generate_error( $e ) {
-		echo '<div class="notice notice-error"><p><strong>' . __( 'AWS Error:', 'edd_s3' ) . '</strong> ' . $e->getAwsErrorMessage() . '</p></div>';
+		return '<div class="notice notice-error"><p><strong>' . __( 'AWS Error:', 'edd_s3' ) . '</strong> ' . $e->getAwsErrorMessage() . '</p></div>';
 	}
 
 	/**
@@ -1174,6 +1173,7 @@ final class EDD_Amazon_S3 {
 	 *
 	 * @access public
 	 * @since  2.3
+	 * @static
 	 */
 	public static function add_fes_functionality() {
 		include_once( EDD_AS3_DIR . 'includes/class-fes-field.php' );
@@ -1185,6 +1185,7 @@ final class EDD_Amazon_S3 {
 	 *
 	 * @access public
 	 * @since  2.3
+	 * @static
 	 *
 	 * @param  array $fields FES fFields.
 	 *
@@ -1209,7 +1210,7 @@ endif;
  * Example: <?php $edd_amazon_s3 = edd_amazon_s3(); ?>
  *
  * @since  2.3
- * @return object The one true EDD_Amazon_S3 Instance.
+ * @return object|void The one true EDD_Amazon_S3 Instance.
  */
 function edd_amazon_s3() {
 	if ( ! class_exists( 'Easy_Digital_Downloads' ) ) {
