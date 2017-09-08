@@ -16,8 +16,10 @@ if ( ! defined( 'ABSPATH' ) ) {
  * FES_S3_Field Class.
  *
  * @since 2.3
+ *
+ * @see FES_Field
  */
-class FES_S3_Field extends FES_Field {
+class EDD_Amazon_S3_FES_Field extends FES_Field {
 
 	/**
 	 * Field Version.
@@ -103,8 +105,8 @@ class FES_S3_Field extends FES_Field {
 	 * @access public
 	 * @since  2.3
 	 *
-	 * @param int  $save_id  Save ID.
-	 * @param bool $readonly Is the field read only?
+	 * @param int $user_id  Save ID.
+	 * @param int $readonly Is the field read only?
 	 *
 	 * @return string HTML to render field in admin.
 	 */
@@ -118,8 +120,8 @@ class FES_S3_Field extends FES_Field {
 	 * @access public
 	 * @since  2.3
 	 *
-	 * @param int  $save_id  Save ID.
-	 * @param bool $readonly Is the field read only?
+	 * @param int $user_id  Save ID.
+	 * @param int $readonly Is the field read only?
 	 *
 	 * @return string HTML to render field in admin.
 	 */
@@ -266,9 +268,10 @@ class FES_S3_Field extends FES_Field {
 				if ( is_array( $values[ $name ] ) ) {
 					foreach ( $values[ $name ] as $key => $file ) {
 						/**
-						 * We ensure that we can pass the FILTER_VALIDATE_URL validation at this stage as the file gets uploaded to S3 on save.
+						 * We ensure that we can pass the FILTER_VALIDATE_URL validation at this stage as the file gets
+						 * uploaded to Amazon S3 on save.
 						 */
-						if ( filter_var( $file, FILTER_VALIDATE_URL ) === false ) {
+						if ( false === filter_var( $file, FILTER_VALIDATE_URL ) ) {
 							$return_value = __( 'Please enter a valid URL.', 'edd_s3' );
 							break;
 						} else {
@@ -376,7 +379,42 @@ class FES_S3_Field extends FES_Field {
 		}
 
 		if ( 'post' === $this->type ) {
+			$files = array();
 
+			if ( is_array( $value ) && ! empty( $value ) ) {
+				foreach ( $value as $key => $url ) {
+					$files[ $key ] = array(
+						'name' => basename( $url ),
+						'file' => $url,
+					);
+				}
+			}
+
+			if ( ! empty( $files ) && is_array( $files ) ) {
+				foreach ( $files as $key => $file ) {
+					$attachment_id = fes_get_attachment_id_from_url( $file['file'], get_current_user_id() );
+
+					if ( ! $attachment_id ) {
+						continue;
+					}
+
+					$user               = get_userdata( get_current_user_id() );
+					$folder_name_option = edd_get_option( 'edd_amazon_s3_fes_folder_name', 'user_nicename' );
+					$folder             = ( 'user_nicename' == $folder_name_option ) ? trailingslashit( $user->user_nicename ) : trailingslashit( $user->ID );
+
+					$args = array(
+						'file' => get_attached_file( $attachment_id, false ),
+						'name' => $folder . basename( $file['name'] ),
+						'type' => get_post_mime_type( $attachment_id ),
+					);
+
+					edd_amazon_s3()->upload_file( $args );
+
+					$files[ $key ]['file'] = edd_get_option( 'edd_amazon_s3_bucket' ) . '/' . $folder . basename( $file['file'] );
+
+					wp_delete_attachment( $attachment_id, true );
+				}
+			}
 		}
 	}
 }
