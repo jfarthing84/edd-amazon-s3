@@ -2,9 +2,12 @@
 /**
  * Plugin Name: Easy Digital Downloads - Amazon S3
  * Plugin URI: http://easydigitaldownloads.com/downloads/amazon-s3/
- * Description: Amazon S3 integration with EDD.  Allows you to upload or download directly from your S3 bucket.
- * Configure on Settings > Extensions tab Version: 2.2.5 Author: Easy Digital Downloads Author URI:
- * https://easydigitaldownloads.com Text Domain: edd_s3 Domain Path: languages
+ * Description: Amazon S3 integration with EDD.  Allows you to upload or download directly from your S3 bucket. Configure on Settings > Extensions tab.
+ * Version: 2.2.5
+ * Author: Easy Digital Downloads
+ * Author URI: https://easydigitaldownloads.com
+ * Text Domain: edd_s3
+ * Domain Path: languages
  *
  * @package  EDD_Amazon_S3
  * @category Core
@@ -1210,11 +1213,11 @@ endif;
  * Example: <?php $edd_amazon_s3 = edd_amazon_s3(); ?>
  *
  * @since  2.3
- * @return object|void The one true EDD_Amazon_S3 Instance.
+ * @return object|null The one true EDD_Amazon_S3 Instance.
  */
 function edd_amazon_s3() {
 	if ( ! class_exists( 'Easy_Digital_Downloads' ) ) {
-		return;
+		return null;
 	}
 
 	// FES Integration
