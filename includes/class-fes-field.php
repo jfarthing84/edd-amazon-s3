@@ -150,28 +150,21 @@ class EDD_Amazon_S3_FES_Field extends FES_Field {
 		<div class="fes-fields">
 			<table class="multiple <?php echo sanitize_key( $this->name() ); ?>">
 				<thead>
-					<tr>
-						<th width="60%" class="fes-file-column"><?php _e( 'File URL', 'edd_s3' ); ?></th>
-						<?php if ( fes_is_admin() ) { ?>
-							<th width="33%" class="fes-download-file">
-								<?php _e( 'Download File', 'edd_s3' ); ?>
-							</th>
-						<?php } ?>
-						<th width="1%" class="fes-remove-column">&nbsp;</th>
-					</tr>
+				<tr>
+					<th width="60%" class="fes-file-column"><?php _e( 'File URL', 'edd_s3' ); ?></th>
+					<th width="33%" class="fes-download-file"><?php _e( 'Download File', 'edd_s3' ); ?></th>
+					<th width="1%" class="fes-remove-column">&nbsp;</th>
+				</tr>
 				</thead>
 				<tbody class="fes-variations-list-<?php echo sanitize_key( $this->name() ); ?>">
 				<?php foreach ( $value as $key => $url ) { ?>
 					<tr class="fes-single-variation">
 						<td width="60%" class="fes-url-row">
-							<input type="text" class="fes-file-value" data-formid="<?php echo $this->form; ?>" data-fieldname="<?php echo $this->name(); ?>" placeholder="<?php _e( 'http://', 'edd_s3' ); ?>" name="<?php echo $this->name(); ?>[<?php echo esc_attr( $key ); ?>]" value="<?php echo esc_attr( $url ); ?>" />
+							<input type="text" class="fes-file-value" data-formid="<?php echo $this->form; ?>" data-fieldname="<?php echo $this->name(); ?>" placeholder="<?php _e( 'http://', 'edd_s3' ); ?>" name="<?php echo $this->name(); ?>[<?php echo esc_attr( $key ); ?>]" value="<?php echo esc_attr( $url['file'] ); ?>" />
 						</td>
 						<td width="33%" class="fes-url-row">
-							<?php
-							if ( ! empty( $url ) ) {
-								echo edd_amazon_s3()->get_s3_url( $url );
-							}
-							?>
+							<a href="#" class="edd-submit button upload_file_button" data-choose="<?php _e( 'Choose file', 'edd_s3' ); ?>" data-update="<?php _e( 'Insert file URL', 'edd_s3' ); ?>"><?php echo str_replace( ' ', '&nbsp;', __( 'Choose file', 'edd_s3' ) ); ?></a>
+							<a href="<?php echo edd_amazon_s3()->get_s3_url( esc_attr( $url['file'] ) ); ?>"><?php _e( 'Download File', 'edd_s3' ); ?></a>
 						</td>
 						<td width="1%" class="fes-delete-row">
 							<a href="#" class="edd-fes-delete delete"><?php _e( '&times;', 'edd_s3' ); ?></a>
@@ -181,11 +174,11 @@ class EDD_Amazon_S3_FES_Field extends FES_Field {
 				<tr class="add_new" style="display:none !important;" id="<?php echo sanitize_key( $this->name() ); ?>"></tr>
 				</tbody>
 				<?php if ( empty( $this->characteristics['count'] ) || $this->characteristics['count'] > 1 ) { ?>
-				<tfoot>
+					<tfoot>
 					<tr>
 						<th colspan="5"><a href="#" class="edd-submit button insert-file-row" id="<?php echo sanitize_key( $this->name() ); ?>"><?php _e( 'Add File', 'edd_s3' ); ?></a></th>
 					</tr>
-				</tfoot>
+					</tfoot>
 				<?php } ?>
 			</table>
 		</div>
