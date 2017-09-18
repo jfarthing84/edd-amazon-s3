@@ -392,7 +392,6 @@ final class EDD_Amazon_S3 {
 	 * @since  1.0
 	 */
 	public function s3_library_tab( $type = 'file', $errors = null, $id = null ) {
-
 		wp_enqueue_style( 'media' );
 
 		$page     = isset( $_GET['p'] ) ? $_GET['p'] : 1;
@@ -458,17 +457,17 @@ final class EDD_Amazon_S3 {
 				return;
 			endif;
 
-			if ( ! $bucket ) { ?>
-				<h3 class="media-title"><?php _e( 'Select a Bucket', 'edd_s3' ); ?></h3>
-				<?php
-				if ( is_array( $buckets ) ) {
-					echo '<table class="wp-list-table widefat fixed striped" style="max-height: 500px;overflow-y:scroll;">';
+		if ( ! $bucket ) { ?>
+			<h3 class="media-title"><?php _e( 'Select a Bucket', 'edd_s3' ); ?></h3>
+			<?php
+			if ( is_array( $buckets ) ) {
+				echo '<table class="wp-list-table widefat fixed striped" style="max-height: 500px;overflow-y:scroll;">';
 					echo '<thead>';
-					echo '<tr>';
-					echo '<th>' . __( 'Bucket Name', 'edd_s3' ) . '</th>';
-					echo '<th>' . __( 'Owner', 'edd_s3' ) . '</th>';
-					echo '<th>' . __( 'Actions', 'edd_s3' ) . '</th>';
-					echo '</tr>';
+						echo '<tr>';
+						echo '<th>' . __( 'Bucket Name', 'edd_s3' ) . '</th>';
+						echo '<th>' . __( 'Owner', 'edd_s3' ) . '</th>';
+						echo '<th>' . __( 'Actions', 'edd_s3' ) . '</th>';
+						echo '</tr>';
 					echo '</thead>';
 
 					if ( count( $buckets['buckets'] ) > 0 ) {
@@ -488,25 +487,30 @@ final class EDD_Amazon_S3 {
 				$back = admin_url( 'media-upload.php?post_id=' . absint( $_GET['post_id'] ) );
 
 				if ( is_array( $files ) ) {
-					$i           = 0;
+					$i = 0;
 					$total_items = count( $files );
 
 					echo '<p><button class="button-secondary" onclick="history.back();">' . __( 'Go Back', 'edd_s3' ) . '</button></p>';
 
 					echo '<table class="wp-list-table widefat fixed striped" style="max-height: 500px;overflow-y:scroll;">';
 					echo '<thead>';
-					echo '<tr>';
-					echo '<th>' . __( 'File Name', 'edd_s3' ) . '</th>';
-					echo '<th>' . __( 'Size', 'edd_s3' ) . '</th>';
-					echo '<th>' . __( 'Last Modified', 'edd_s3' ) . '</th>';
-					echo '<th>' . __( 'Owner', 'edd_s3' ) . '</th>';
-					echo '<th>' . __( 'Actions', 'edd_s3' ) . '</th>';
-					echo '</tr>';
-					echo '<thead>';
+						echo '<tr>';
+							echo '<th>' . __( 'File Name', 'edd_s3' ) . '</th>';
+							echo '<th>' . __( 'Size', 'edd_s3' ) . '</th>';
+							echo '<th>' . __( 'Last Modified', 'edd_s3' ) . '</th>';
+							echo '<th>' . __( 'Owner', 'edd_s3' ) . '</th>';
+							echo '<th>' . __( 'Actions', 'edd_s3' ) . '</th>';
+						echo '</tr>';
+					echo '</thead>';
 
 					if ( $total_items > 0 ) {
 						echo '<tbody>';
+
 						foreach ( $files as $key => $file ) {
+							if( $file['name'][ strlen( $file['name'] ) - 1 ] === '/' ) {
+								continue; // Don't show folders
+							}
+
 							echo '<tr>';
 							if ( $i == 0 ) {
 								$first_file = $key;
@@ -534,30 +538,28 @@ final class EDD_Amazon_S3 {
 						}
 						echo '</tbody>';
 					}
+
 					echo '</table>';
 				}
-
-				$base = admin_url( 'media-upload.php?post_id=' . absint( $_GET['post_id'] ) . '&tab=s3_library' );
-
-				if ( $bucket ) {
-					$base = add_query_arg( 'bucket', $bucket, $base );
-				}
-
-				echo '<div class="s3-pagination tablenav">';
-				echo '<div class="tablenav-pages alignright">';
-				if ( isset( $_GET['p'] ) && $_GET['p'] > 1 ) {
-					echo '<a class="page-numbers prev" href="' . esc_url( remove_query_arg( 'p', $base ) ) . '">' . __( 'Start Over', 'edd_s3' ) . '</a>';
-				}
-
-				if ( $i >= 29 ) {
-					echo '<a class="page-numbers next" href="' . esc_url( add_query_arg( array(
-							'p'     => $page + 1,
-							'start' => $last_file,
-						), $base ) ) . '">' . __( 'View More', 'edd_s3' ) . '</a>';
-				}
-				echo '</div>';
-				echo '</div>';
 			}
+
+			$base = admin_url( 'media-upload.php?post_id=' . absint( $_GET['post_id'] ) . '&tab=s3_library' );
+
+			if ( $bucket ) {
+				$base = add_query_arg( 'bucket', $bucket, $base );
+			}
+
+			echo '<div class="s3-pagination tablenav">';
+				echo '<div class="alignleft">';
+					if ( isset( $_GET['p'] ) && $_GET['p'] > 1 ) {
+						echo '<a class="button-secondary prev" href="' . esc_url( remove_query_arg( 'p', $base ) ) . '">' . __( 'Start Over', 'edd_s3' ) . '</a>';
+					}
+
+					if ( $i >= 29 ) {
+						echo '<a class="button-secondary next" href="' . esc_url( add_query_arg( array( 'p' => $page + 1, 'start' => $last_file ), $base ) ) . '">' . __( 'View More', 'edd_s3' ) . '</a>';
+					}
+				echo '</div>';
+			echo '</div>';
 			?>
 		</div>
 		<?php
@@ -1227,5 +1229,4 @@ function edd_amazon_s3() {
 
 	return EDD_Amazon_S3::get_instance();
 }
-
 add_action( 'plugins_loaded', 'edd_amazon_s3', 10 );
