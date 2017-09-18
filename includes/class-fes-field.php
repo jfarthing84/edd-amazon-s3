@@ -233,7 +233,7 @@ class EDD_Amazon_S3_FES_Field extends FES_Field {
 		 */
 		$readonly = apply_filters( 'fes_render_edd_s3_field_readonly_admin', $readonly, $user_id, $this->id );
 
-		$value = $this->get_field_value_admin( $this->save_id, $user_id, $readonly );
+		$value = $this->get_field_value_frontend( $this->save_id, $user_id, $readonly );
 
 		if ( ! is_array( $value ) || empty( $value ) ) {
 			$value = array( 0 => '' );
@@ -261,7 +261,7 @@ class EDD_Amazon_S3_FES_Field extends FES_Field {
 				<?php foreach ( $value as $key => $url ) { ?>
 					<tr class="fes-single-variation">
 						<td width="60%" class="fes-url-row">
-							<input type="text" class="fes-file-value" data-formid="<?php echo $this->form; ?>" data-fieldname="<?php echo $this->name(); ?>" placeholder="<?php _e( 'http://', 'edd_s3' ); ?>" name="<?php echo $this->name(); ?>[<?php echo esc_attr( $key ); ?>]" value="<?php echo esc_attr( $url ); ?>" />
+							<input type="text" class="fes-file-value" data-formid="<?php echo $this->form; ?>" data-fieldname="<?php echo $this->name(); ?>" placeholder="<?php _e( 'http://', 'edd_s3' ); ?>" name="<?php echo $this->name(); ?>[<?php echo esc_attr( $key ); ?>]" value="<?php echo esc_attr( $url['file'] ); ?>" />
 						</td>
 						<td width="33%" class="fes-url-row">
 							<a href="#" class="edd-submit button upload_file_button" data-choose="<?php _e( 'Choose file', 'edd_s3' ); ?>" data-update="<?php _e( 'Insert file URL', 'edd_s3' ); ?>"><?php echo str_replace( ' ', '&nbsp;', __( 'Choose file', 'edd_s3' ) ); ?></a>
@@ -498,6 +498,10 @@ class EDD_Amazon_S3_FES_Field extends FES_Field {
 					wp_delete_attachment( $attachment_id, true );
 				}
 			}
+
+			$value = update_post_meta( $save_id, $this->id, $files );
+			$this->value = $value;
+			do_action( 'fes_save_field_after_save_frontend', $this, $save_id, $value, $user_id );
 		}
 
 		/**
