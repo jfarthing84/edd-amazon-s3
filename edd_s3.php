@@ -622,7 +622,7 @@ class EDD_Amazon_S3 {
 						'time'          => strtotime( $file['LastModified'] ),
 						'size'          => $file['Size'],
 						'hash'          => substr( $file['ETag'], 1, -1 ),
-						'owner'         => $file['Owner']['DisplayName']
+						'owner'         => isset( $file['Owner']['DisplayName'] ) ? $file['Owner']['DisplayName'] : __( 'N/A', 'edd_s3' ),
 					);
 				}
 			}
