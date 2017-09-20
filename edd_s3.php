@@ -530,6 +530,11 @@ class EDD_Amazon_S3 {
 						}
 						echo '</tbody>';
 					echo '</table>';
+				} else {
+					echo '<div class="error">';
+						echo '<p>' . __( 'No files have been uploaded to Amazon S3 yet. Upload one now!', 'edd_s3' ) . '</p>';
+					echo '</div>';
+					exit;
 				}
 			}
 
