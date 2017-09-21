@@ -1,143 +1,181 @@
-#, fuzzy
+# Copyright (C) 2017 Easy Digital Downloads
+# This file is distributed under the same license as the Easy Digital Downloads - Amazon S3 package.
 msgid ""
 msgstr ""
-"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
-"Project-Id-Version: Easy Digital Downloads - Amazon S3\n"
-"POT-Creation-Date: 2015-09-01 08:47+0200\n"
-"PO-Revision-Date: 2015-09-01 08:47+0200\n"
-"Last-Translator: fxbenard | FxB <fx@fxbenard.com>\n"
-"Language-Team: fxbenard | FxB <fx@fxbenard.com>\n"
+"Project-Id-Version: Easy Digital Downloads - Amazon S3 2.2.5\n"
+"Report-Msgid-Bugs-To: https://easydigitaldownloads.com/support/\n"
+"POT-Creation-Date: 2017-09-21 10:19:49+00:00\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.8.4\n"
-"X-Poedit-Basepath: ..\n"
-"X-Poedit-WPHeader: edd_s3.php\n"
+"PO-Revision-Date: 2017-MO-DA HO:MI+ZONE\n"
+"Last-Translator: Easy Digital Downloads <support@easydigitaldownloads.com>\n"
+"Language-Team: Easy Digital Downloads <support@easydigitaldownloads.com>\n"
+"X-Generator: grunt-wp-i18n 0.5.4\n"
+"X-Poedit-KeywordsList: "
+"__;_e;_x:1,2c;_ex:1,2c;_n:1,2;_nx:1,2,4c;_n_noop:1,2;_nx_noop:1,2,3c;esc_"
+"attr__;esc_html__;esc_attr_e;esc_html_e;esc_attr_x:1,2c;esc_html_x:1,2c;\n"
+"Language: en_US\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-Country: United States\n"
 "X-Poedit-SourceCharset: UTF-8\n"
-"X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;"
-"esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;_n_noop:1,2;"
-"_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
+"X-Poedit-Basepath: ../\n"
 "X-Poedit-SearchPath-0: .\n"
-"X-Poedit-SearchPathExcluded-0: *.js\n"
+"X-Poedit-Bookmarks: \n"
+"X-Textdomain-Support: yes\n"
 
-#: edd_s3.php:190
+#: edd_s3.php:235
+msgid ""
+"Easy Digital Downloads - Amazon S3 requires PHP version 5.5.0 or higher. "
+"Your server is running PHP version %s. Please contact your hosting company "
+"to upgrade your site to 5.5.0 or later."
+msgstr ""
+
+#: edd_s3.php:243
+msgid "Please enter your <a href=\"%s\">Amazon S3 Access Key ID and Secret Key</a>"
+msgstr ""
+
+#: edd_s3.php:249
 msgid "Upload to Amazon S3"
 msgstr ""
 
-#: edd_s3.php:191
+#: edd_s3.php:250
 msgid "Amazon S3 Library"
 msgstr ""
 
-#: edd_s3.php:234
-#, php-format
-msgid ""
-"Please enter your <a href=\"%s\" target=\"_blank\">Amazon S3 API keys</a>."
+#: edd_s3.php:306
+msgid "Please enter your <a href=\"%s\" target=\"_blank\">Amazon S3 API keys</a>."
 msgstr ""
 
-#: edd_s3.php:247
+#: edd_s3.php:318 edd_s3.php:396 edd_s3.php:413 edd_s3.php:673
+msgid "Error retrieving file. Please contact the site administrator."
+msgstr ""
+
+#: edd_s3.php:333
 msgid "Select a bucket to upload the file to"
 msgstr ""
 
-#: edd_s3.php:253
+#: edd_s3.php:339
 msgid "Upload to S3"
 msgstr ""
 
-#: edd_s3.php:257
-#, php-format
+#: edd_s3.php:343
 msgid ""
-"Success! <a href=\"#\" class=\"edd-s3-insert\">Insert uploaded file into %s</"
-"a>."
+"Success! <a href=\"#\" class=\"edd-s3-insert\">Insert uploaded file into "
+"%s</a>."
 msgstr ""
 
-#: edd_s3.php:315
-#, php-format
-msgid ""
-"Please enter your <a href=\"%s\" target=\"blank\">Amazon S3 API keys</a>."
+#: edd_s3.php:438
+msgid "Please enter your <a href=\"%s\" target=\"blank\">Amazon S3 API keys</a>."
 msgstr ""
 
-#: edd_s3.php:321
+#: edd_s3.php:445
 msgid "Select a Bucket"
 msgstr ""
 
-#: edd_s3.php:329
-msgid "Bucket name"
+#: edd_s3.php:451
+msgid "Bucket Name"
 msgstr ""
 
-#: edd_s3.php:330 edd_s3.php:359
+#: edd_s3.php:452 edd_s3.php:493
+msgid "Owner"
+msgstr ""
+
+#: edd_s3.php:453 edd_s3.php:494
 msgid "Actions"
 msgstr ""
 
-#: edd_s3.php:337
+#: edd_s3.php:463
 msgid "Browse"
 msgstr ""
 
-#: edd_s3.php:353
+#: edd_s3.php:476 edd_s3.php:485
 msgid "Go Back"
 msgstr ""
 
-#: edd_s3.php:358
-msgid "File name"
+#: edd_s3.php:490
+msgid "File Name"
 msgstr ""
 
-#: edd_s3.php:376
+#: edd_s3.php:491
+msgid "Size"
+msgstr ""
+
+#: edd_s3.php:492
+msgid "Last Modified"
+msgstr ""
+
+#: edd_s3.php:527
 msgid "Use File"
 msgstr ""
 
-#: edd_s3.php:393
+#: edd_s3.php:535
+msgid "No files have been uploaded to Amazon S3 yet. Upload one now!"
+msgstr ""
+
+#: edd_s3.php:550
 msgid "Start Over"
 msgstr ""
 
-#: edd_s3.php:395
+#: edd_s3.php:554
 msgid "View More"
 msgstr ""
 
-#: edd_s3.php:455
+#: edd_s3.php:630
+msgid "N/A"
+msgstr ""
+
+#: edd_s3.php:715
 msgid "You do not have permission to upload files to S3"
 msgstr ""
 
-#: edd_s3.php:459
+#: edd_s3.php:719
 msgid "Please select a file to upload"
 msgstr ""
 
-#: edd_s3.php:459 edd_s3.php:474
+#: edd_s3.php:719 edd_s3.php:734
 msgid "Error"
 msgstr ""
 
-#: edd_s3.php:474
+#: edd_s3.php:734
 msgid "Something went wrong during the upload process"
 msgstr ""
 
-#: edd_s3.php:604
+#: edd_s3.php:951
+msgid "Amazon S3"
+msgstr ""
+
+#: edd_s3.php:967
 msgid "<strong>Amazon S3 Settings</strong>"
 msgstr ""
 
-#: edd_s3.php:611
+#: edd_s3.php:973
 msgid "Amazon S3 Access Key ID"
 msgstr ""
 
-#: edd_s3.php:612
+#: edd_s3.php:974
 msgid ""
-"After logging into your S3 account, click on \"Security Credentials\" in the "
-"sidebar.  Scroll down to \"Access Credentials\" and you will see your Access "
-"Key ID.  Copy and paste it here."
+"Enter your IAM user&#39;s Access Key ID. See our <a "
+"href=\"http://docs.easydigitaldownloads.com/article/393-amazon-s3-"
+"documentation\">documentation for assistance</a>."
 msgstr ""
 
-#: edd_s3.php:619
+#: edd_s3.php:980
 msgid "Amazon S3 Secret Key"
 msgstr ""
 
-#: edd_s3.php:620
+#: edd_s3.php:981
 msgid ""
-"In the same Access Credentials area, your \"Secret Key\" will be hidden.  "
-"You will need to click the \"Show\" link to see it.  Copy and paste it here."
+"Enter your IAM user&#39;s Secret Key. See our <a "
+"href=\"http://docs.easydigitaldownloads.com/article/393-amazon-s3-"
+"documentation\">documentation for assistance</a>."
 msgstr ""
 
-#: edd_s3.php:627
+#: edd_s3.php:987
 msgid "Amazon S3 Bucket"
 msgstr ""
 
-#: edd_s3.php:628
-#, php-format
+#: edd_s3.php:988
 msgid ""
 "To create new buckets or get a listing of your current buckets, go to your "
 "<a href=\"%s\">S3 Console</a> (you must be logged in to access the "
@@ -145,45 +183,41 @@ msgid ""
 "default bucket you would like to use here."
 msgstr ""
 
-#: edd_s3.php:634
+#: edd_s3.php:993
 msgid "Amazon S3 Host"
 msgstr ""
 
-#: edd_s3.php:635
+#: edd_s3.php:994
 msgid ""
 "Set the host you wish to use. Leave default if you do not know what this is "
 "for"
 msgstr ""
 
-#: edd_s3.php:642
+#: edd_s3.php:1000
 msgid "Link Expiry Time"
 msgstr ""
 
-#: edd_s3.php:643
+#: edd_s3.php:1001
 msgid ""
 "Amazon S3 links expire after a certain amount of time. This default number "
 "of minutes will be used when capturing file downloads, but can be overriden "
 "per file if needed."
 msgstr ""
 
-#. Plugin Name of the plugin/theme
-msgid "Easy Digital Downloads - Amazon S3"
+#: edd_s3.php:1010
+msgid "Folder Name"
 msgstr ""
 
-#. Plugin URI of the plugin/theme
-msgid "http://easydigitaldownloads.com/extension/amazon-s3/"
+#: edd_s3.php:1011
+msgid "Folder name used when uploading to S3 from FES."
+msgstr ""
+
+#: edd_s3.php:1155
+msgid "AWS Error:"
 msgstr ""
 
 #. Description of the plugin/theme
 msgid ""
 "Amazon S3 integration with EDD.  Allows you to upload or download directly "
 "from your S3 bucket. Configure on Settings > Extensions tab"
-msgstr ""
-
-#. Author of the plugin/theme
-msgid "Justin Sainton, Pippin Williamson & Brad Vincent"
-msgstr ""
-
-#. Author URI of the plugin/theme
-msgid "http://www.zao.is"
 msgstr ""
