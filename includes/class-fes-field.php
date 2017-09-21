@@ -215,7 +215,7 @@ class EDD_Amazon_S3_FES_Field extends FES_Field {
 		 * @param int $user_id User ID.
 		 * @param int $id      Field ID.
 		 */
-		$user_id = apply_filters( 'fes_render_edd_s3_field_user_id_admin', $user_id, $this->id );
+		$user_id = apply_filters( 'fes_render_edd_s3_field_user_id_frontend', $user_id, $this->id );
 
 		/**
 		 * Filter the `readonly` value.
@@ -224,7 +224,7 @@ class EDD_Amazon_S3_FES_Field extends FES_Field {
 		 * @param int  $user_id  User ID.
 		 * @param int  $id       Field ID.
 		 */
-		$readonly = apply_filters( 'fes_render_edd_s3_field_readonly_admin', $readonly, $user_id, $this->id );
+		$readonly = apply_filters( 'fes_render_edd_s3_field_readonly_frontend', $readonly, $user_id, $this->id );
 
 		$value = $this->get_field_value_frontend( $this->save_id, $user_id, $readonly );
 
