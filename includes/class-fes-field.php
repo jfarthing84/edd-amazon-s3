@@ -254,7 +254,7 @@ class EDD_Amazon_S3_FES_Field extends FES_Field {
 				<?php foreach ( $value as $key => $url ) { ?>
 					<tr class="fes-single-variation">
 						<td width="60%" class="fes-url-row">
-							<input type="text" class="fes-file-value" data-formid="<?php echo $this->form; ?>" data-fieldname="<?php echo $this->name(); ?>" placeholder="<?php _e( 'http://', 'edd_s3' ); ?>" name="<?php echo $this->name(); ?>[<?php echo esc_attr( $key ); ?>]" value="<?php echo esc_attr( $url['file'] ); ?>" />
+							<input type="text" class="fes-file-value" data-formid="<?php echo $this->form; ?>" data-fieldname="<?php echo $this->name(); ?>" placeholder="<?php _e( 'http://', 'edd_s3' ); ?>" name="<?php echo $this->name(); ?>[<?php echo esc_attr( $key ); ?>]" value="<?php echo isset( $url['file'] ) ? esc_attr( $url['file'] ) : ''; ?>" />
 						</td>
 						<td width="33%" class="fes-url-row">
 							<a href="#" class="edd-submit button upload_file_button" data-choose="<?php _e( 'Choose file', 'edd_s3' ); ?>" data-update="<?php _e( 'Insert file URL', 'edd_s3' ); ?>"><?php echo str_replace( ' ', '&nbsp;', __( 'Choose file', 'edd_s3' ) ); ?></a>
