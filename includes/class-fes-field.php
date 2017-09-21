@@ -87,6 +87,7 @@ class EDD_Amazon_S3_FES_Field extends FES_Field {
 		'size'        => '',
 		'help'        => '',
 		'placeholder' => '',
+		'extension'   => array(),
 	);
 
 	/**
@@ -176,7 +177,9 @@ class EDD_Amazon_S3_FES_Field extends FES_Field {
 				<?php if ( empty( $this->characteristics['count'] ) || $this->characteristics['count'] > 1 ) { ?>
 					<tfoot>
 					<tr>
-						<th colspan="5"><a href="#" class="edd-submit button insert-file-row" id="<?php echo sanitize_key( $this->name() ); ?>"><?php _e( 'Add File', 'edd_s3' ); ?></a></th>
+						<th colspan="5">
+							<a href="#" class="edd-submit button insert-file-row" id="<?php echo sanitize_key( $this->name() ); ?>"><?php _e( 'Add File', 'edd_s3' ); ?></a>
+						</th>
 					</tr>
 					</tfoot>
 				<?php } ?>
@@ -269,7 +272,9 @@ class EDD_Amazon_S3_FES_Field extends FES_Field {
 				<?php if ( empty( $this->characteristics['count'] ) || $this->characteristics['count'] > 1 ) { ?>
 					<tfoot>
 					<tr>
-						<th colspan="5"><a href="#" class="edd-submit button insert-file-row" id="<?php echo sanitize_key( $this->name() ); ?>"><?php _e( 'Add File', 'edd_s3' ); ?></a></th>
+						<th colspan="5">
+							<a href="#" class="edd-submit button insert-file-row" id="<?php echo sanitize_key( $this->name() ); ?>"><?php _e( 'Add File', 'edd_s3' ); ?></a>
+						</th>
 					</tr>
 					</tfoot>
 				<?php } ?>
@@ -302,8 +307,30 @@ class EDD_Amazon_S3_FES_Field extends FES_Field {
 			<?php FES_Formbuilder_Templates::hidden_field( "[$index][template]", $this->template() ); ?>
 
 			<?php FES_Formbuilder_Templates::field_div( $index, $this->name(), $this->characteristics, $insert ); ?>
-			<?php FES_Formbuilder_Templates::public_radio( $index, $this->characteristics, $this->form_name ); ?>
-			<?php FES_Formbuilder_Templates::standard( $index, $this ); ?>
+				<?php FES_Formbuilder_Templates::public_radio( $index, $this->characteristics, $this->form_name ); ?>
+				<?php FES_Formbuilder_Templates::standard( $index, $this ); ?>
+				<div class="fes-form-rows">
+					<label><?php _e( 'Allowed Files', 'edd_fes' ); ?></label>
+
+					<div class="fes-form-sub-fields">
+						<?php
+						$args = array(
+							'options'          => fes_allowed_extensions(),
+							'name'             => sprintf( '%s[%d][extension][]', 'fes_input', $index ),
+							'class'            => 'select long',
+							'id'               => sprintf( '%s_%d_extension', 'fes_input', $index ),
+							'selected'         => isset( $this->characteristics['extension'] ) ? $this->characteristics['extension'] : array(),
+							'chosen'           => true,
+							'placeholder'      => esc_attr( __( 'Pick which file types to allow. Leave empty for all types.', 'edd_s3' ) ),
+							'multiple'         => true,
+							'show_option_all'  => false,
+							'show_option_none' => false,
+							'data'             => array( 'search-type' => 'no_ajax' ),
+						);
+						echo EDD()->html->select( $args );
+						?>
+					</div>
+				</div>
 			</div>
 		</li>
 		<?php
@@ -352,6 +379,29 @@ class EDD_Amazon_S3_FES_Field extends FES_Field {
 				}
 			} else {
 				$return_value = __( 'Please fill out this field.', 'edd_s3' );
+			}
+		}
+
+		if ( ! $return_value ) {
+			if ( !empty( $values[ $name ] ) ) {
+				if ( is_array( $values[ $name ] ) ){
+					foreach( $values[ $name ] as $key => $file  ){
+						if ( filter_var( $file, FILTER_VALIDATE_URL ) !== false && ! empty( $this->characteristics['extension'] ) ){
+							$parts = parse_url( $file );
+							$file_type = wp_check_filetype( basename( $parts["path"] ) );
+							$file_type = $file_type['ext'];
+							if ( ! in_array( $file_type, $this->characteristics['extension'] ) ) {
+								$allowed_types = implode( ', ', array_values( $this->characteristics['extension'] ) );
+								$return_value = sprintf( __( 'Please use files with one of these extensions: %s', 'edd_s3' ), $allowed_types );
+								break;
+							}
+							if ( ! edd_is_local_file( $file ) ) {
+								$return_value = __( 'Files must be uploaded through the upload form', 'edd_s3' );
+								break;
+							}
+						}
+					}
+				}
 			}
 		}
 
@@ -492,7 +542,7 @@ class EDD_Amazon_S3_FES_Field extends FES_Field {
 				}
 			}
 
-			$value = update_post_meta( $save_id, $this->id, $files );
+			$value       = update_post_meta( $save_id, $this->id, $files );
 			$this->value = $value;
 			do_action( 'fes_save_field_after_save_frontend', $this, $save_id, $value, $user_id );
 		}
