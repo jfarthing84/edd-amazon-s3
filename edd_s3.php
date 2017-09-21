@@ -540,6 +540,11 @@ final class EDD_Amazon_S3 {
 					}
 
 					echo '</table>';
+				} else {
+					echo '<div class="error">';
+						echo '<p>' . __( 'No files have been uploaded to Amazon S3 yet. Upload one now!', 'edd_s3' ) . '</p>';
+					echo '</div>';
+					exit;
 				}
 			}
 
@@ -628,11 +633,11 @@ final class EDD_Amazon_S3 {
 			if ( isset( $files['Contents'] ) ) {
 				foreach ( $files['Contents'] as $file ) {
 					$results[ $file['Key'] ] = array(
-						'name'  => $file['Key'],
-						'time'  => strtotime( $file['LastModified'] ),
-						'size'  => $file['Size'],
-						'hash'  => substr( $file['ETag'], 1, -1 ),
-						'owner' => $file['Owner']['DisplayName'],
+						'name'          => $file['Key'],
+						'time'          => strtotime( $file['LastModified'] ),
+						'size'          => $file['Size'],
+						'hash'          => substr( $file['ETag'], 1, -1 ),
+						'owner'         => isset( $file['Owner']['DisplayName'] ) ? $file['Owner']['DisplayName'] : __( 'N/A', 'edd_s3' ),
 					);
 				}
 			}
