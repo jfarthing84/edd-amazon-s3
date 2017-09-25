@@ -321,7 +321,7 @@ class EDD_Amazon_S3_FES_Field extends FES_Field {
 							'id'               => sprintf( '%s_%d_extension', 'fes_input', $index ),
 							'selected'         => isset( $this->characteristics['extension'] ) ? $this->characteristics['extension'] : array(),
 							'chosen'           => true,
-							'placeholder'      => esc_attr( __( 'Pick which file types to allow. Leave empty for all types.', 'edd_s3' ) );,
+							'placeholder'      => esc_attr( __( 'Pick which file types to allow. Leave empty for all types.', 'edd_s3' ) ),
 							'multiple'         => true,
 							'show_option_all'  => false,
 							'show_option_none' => false,
