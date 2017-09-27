@@ -479,7 +479,7 @@ final class EDD_Amazon_S3 {
 							echo '<td><a href="' . esc_url( add_query_arg( 'bucket', $bucket['name'] ) ) . '">' . __( 'Browse', 'edd_s3' ) . '</a></td>';
 							echo '</tr>';
 						}
-						echo '<tbody>';
+						echo '</tbody>';
 					}
 					echo '</table>';
 				}
@@ -546,26 +546,26 @@ final class EDD_Amazon_S3 {
 					echo '</div>';
 					exit;
 				}
-			}
 
-			$base = admin_url( 'media-upload.php?post_id=' . absint( $_GET['post_id'] ) . '&tab=s3_library' );
+				$base = admin_url( 'media-upload.php?post_id=' . absint( $_GET['post_id'] ) . '&tab=s3_library' );
 
-			if ( $bucket ) {
-				$base = add_query_arg( 'bucket', $bucket, $base );
-			}
+				if ( $bucket ) {
+					$base = add_query_arg( 'bucket', $bucket, $base );
+				}
 
-			echo '<div class="s3-pagination tablenav">';
-				echo '<div class="alignleft">';
-					if ( isset( $_GET['p'] ) && $_GET['p'] > 1 ) {
-						echo '<a class="button-secondary prev" href="' . esc_url( remove_query_arg( 'p', $base ) ) . '">' . __( 'Start Over', 'edd_s3' ) . '</a>';
-					}
+				echo '<div class="s3-pagination tablenav">';
+					echo '<div class="alignleft">';
+						if ( isset( $_GET['p'] ) && $_GET['p'] > 1 ) {
+							echo '<a class="button-secondary prev" href="' . esc_url( remove_query_arg( 'p', $base ) ) . '">' . __( 'Start Over', 'edd_s3' ) . '</a>';
+						}
 
-					if ( $i >= 29 ) {
-						echo '<a class="button-secondary next" href="' . esc_url( add_query_arg( array( 'p' => $page + 1, 'start' => $last_file ), $base ) ) . '">' . __( 'View More', 'edd_s3' ) . '</a>';
-					}
+						if ( $i >= 29 ) {
+							echo '<a class="button-secondary next" href="' . esc_url( add_query_arg( array( 'p' => $page + 1, 'start' => $last_file ), $base ) ) . '">' . __( 'View More', 'edd_s3' ) . '</a>';
+						}
+					echo '</div>';
 				echo '</div>';
-			echo '</div>';
-			?>
+			}
+				?>
 		</div>
 		<?php
 	}
