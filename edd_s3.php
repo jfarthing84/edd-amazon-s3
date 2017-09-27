@@ -565,7 +565,7 @@ final class EDD_Amazon_S3 {
 					echo '</div>';
 				echo '</div>';
 			}
-				?>
+			?>
 		</div>
 		<?php
 	}
