@@ -1,6 +1,6 @@
 {
 	"name": "EDD_AmazonS3",
-	"version": "2.3.0",
+	"version": "2.3.1",
 	"description": "Amazon S3 integration with EDD.  Allows you to upload or download directly from your S3 bucket. Configure on Settings > Extensions tab.",
 	"homepage": "https://easydigitaldownloads.com/downloads/amazon-s3/",
 	"author": {

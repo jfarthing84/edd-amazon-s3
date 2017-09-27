@@ -2,9 +2,9 @@
 # This file is distributed under the same license as the Easy Digital Downloads - Amazon S3 package.
 msgid ""
 msgstr ""
-"Project-Id-Version: Easy Digital Downloads - Amazon S3 2.3\n"
+"Project-Id-Version: Easy Digital Downloads - Amazon S3 2.3.1\n"
 "Report-Msgid-Bugs-To: https://easydigitaldownloads.com/support/\n"
-"POT-Creation-Date: 2017-09-26 20:16:13+00:00\n"
+"POT-Creation-Date: 2017-09-27 23:55:21+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -113,11 +113,11 @@ msgstr ""
 msgid "No files have been uploaded to Amazon S3 yet. Upload one now!"
 msgstr ""
 
-#: edd_s3.php:560
+#: edd_s3.php:559
 msgid "Start Over"
 msgstr ""
 
-#: edd_s3.php:564
+#: edd_s3.php:563
 msgid "View More"
 msgstr ""
 
@@ -216,64 +216,64 @@ msgstr ""
 msgid "AWS Error:"
 msgstr ""
 
-#: includes/class-fes-field.php:155 includes/class-fes-field.php:247
+#: includes/class-fes-field.php:155 includes/class-fes-field.php:249
 msgid "File URL"
 msgstr ""
 
-#: includes/class-fes-field.php:156 includes/class-fes-field.php:168
-#: includes/class-fes-field.php:250
+#: includes/class-fes-field.php:156 includes/class-fes-field.php:169
+#: includes/class-fes-field.php:252
 msgid "Download File"
 msgstr ""
 
-#: includes/class-fes-field.php:164 includes/class-fes-field.php:260
+#: includes/class-fes-field.php:164 includes/class-fes-field.php:262
 msgid "http://"
 msgstr ""
 
-#: includes/class-fes-field.php:167 includes/class-fes-field.php:263
+#: includes/class-fes-field.php:167 includes/class-fes-field.php:265
 msgid "Choose file"
 msgstr ""
 
-#: includes/class-fes-field.php:167 includes/class-fes-field.php:263
+#: includes/class-fes-field.php:167 includes/class-fes-field.php:265
 msgid "Insert file URL"
 msgstr ""
 
-#: includes/class-fes-field.php:171 includes/class-fes-field.php:266
+#: includes/class-fes-field.php:173 includes/class-fes-field.php:268
 msgid "&times;"
 msgstr ""
 
-#: includes/class-fes-field.php:181 includes/class-fes-field.php:276
+#: includes/class-fes-field.php:183 includes/class-fes-field.php:278
 msgid "Add File"
 msgstr ""
 
-#: includes/class-fes-field.php:313
+#: includes/class-fes-field.php:315
 msgid "Allowed Files"
 msgstr ""
 
-#: includes/class-fes-field.php:324
+#: includes/class-fes-field.php:326
 msgid "Pick which file types to allow. Leave empty for all types."
 msgstr ""
 
-#: includes/class-fes-field.php:329
+#: includes/class-fes-field.php:331
 msgid "Type to search all file types"
 msgstr ""
 
-#: includes/class-fes-field.php:371
+#: includes/class-fes-field.php:373
 msgid "Please enter a valid URL."
 msgstr ""
 
-#: includes/class-fes-field.php:375
+#: includes/class-fes-field.php:377
 msgid "Files must be uploaded through the upload form."
 msgstr ""
 
-#: includes/class-fes-field.php:380 includes/class-fes-field.php:383
+#: includes/class-fes-field.php:382 includes/class-fes-field.php:385
 msgid "Please fill out this field."
 msgstr ""
 
-#: includes/class-fes-field.php:397
+#: includes/class-fes-field.php:399
 msgid "Please use files with one of these extensions: %s"
 msgstr ""
 
-#: includes/class-fes-field.php:401
+#: includes/class-fes-field.php:403
 msgid "Files must be uploaded through the upload form"
 msgstr ""
 
