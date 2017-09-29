@@ -2,9 +2,9 @@
 # This file is distributed under the same license as the Easy Digital Downloads - Amazon S3 package.
 msgid ""
 msgstr ""
-"Project-Id-Version: Easy Digital Downloads - Amazon S3 2.3.1\n"
+"Project-Id-Version: Easy Digital Downloads - Amazon S3 2.3.3\n"
 "Report-Msgid-Bugs-To: https://easydigitaldownloads.com/support/\n"
-"POT-Creation-Date: 2017-09-27 23:55:21+00:00\n"
+"POT-Creation-Date: 2017-09-29 21:25:02+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -24,158 +24,152 @@ msgstr ""
 "X-Poedit-Bookmarks: \n"
 "X-Textdomain-Support: yes\n"
 
-#: edd_s3.php:251
-msgid ""
-"Easy Digital Downloads - Amazon S3 requires PHP version 5.5.0 or higher. "
-"Your server is running PHP version %s. Please contact your hosting company "
-"to upgrade your site to 5.5.0 or later."
-msgstr ""
-
-#: edd_s3.php:257
+#: class-edd-amazon-s3.php:201
 msgid "Please enter your <a href=\"%s\">Amazon S3 Access Key ID and Secret Key</a>"
 msgstr ""
 
-#: edd_s3.php:263
+#: class-edd-amazon-s3.php:207
 msgid "Upload to Amazon S3"
 msgstr ""
 
-#: edd_s3.php:264
+#: class-edd-amazon-s3.php:208
 msgid "Amazon S3 Library"
 msgstr ""
 
-#: edd_s3.php:322
+#: class-edd-amazon-s3.php:266
 msgid "Please enter your <a href=\"%s\" target=\"_blank\">Amazon S3 API keys</a>."
 msgstr ""
 
-#: edd_s3.php:335 edd_s3.php:412 edd_s3.php:429 edd_s3.php:683
+#: class-edd-amazon-s3.php:279 class-edd-amazon-s3.php:356
+#: class-edd-amazon-s3.php:373 class-edd-amazon-s3.php:627
 msgid "Error retrieving file. Please contact the site administrator."
 msgstr ""
 
-#: edd_s3.php:350
+#: class-edd-amazon-s3.php:294
 msgid "Select a bucket to upload the file to"
 msgstr ""
 
-#: edd_s3.php:356
+#: class-edd-amazon-s3.php:300
 msgid "Upload to S3"
 msgstr ""
 
-#: edd_s3.php:360
+#: class-edd-amazon-s3.php:304
 msgid ""
 "Success! <a href=\"#\" class=\"edd-s3-insert\">Insert uploaded file into "
 "%s</a>."
 msgstr ""
 
-#: edd_s3.php:454
+#: class-edd-amazon-s3.php:398
 msgid "Please enter your <a href=\"%s\" target=\"blank\">Amazon S3 API keys</a>."
 msgstr ""
 
-#: edd_s3.php:461
+#: class-edd-amazon-s3.php:405
 msgid "Select a Bucket"
 msgstr ""
 
-#: edd_s3.php:467
+#: class-edd-amazon-s3.php:411
 msgid "Bucket Name"
 msgstr ""
 
-#: edd_s3.php:468 edd_s3.php:501
+#: class-edd-amazon-s3.php:412 class-edd-amazon-s3.php:445
 msgid "Owner"
 msgstr ""
 
-#: edd_s3.php:469 edd_s3.php:502
+#: class-edd-amazon-s3.php:413 class-edd-amazon-s3.php:446
 msgid "Actions"
 msgstr ""
 
-#: edd_s3.php:479
+#: class-edd-amazon-s3.php:423
 msgid "Browse"
 msgstr ""
 
-#: edd_s3.php:493
+#: class-edd-amazon-s3.php:437
 msgid "Go Back"
 msgstr ""
 
-#: edd_s3.php:498
+#: class-edd-amazon-s3.php:442
 msgid "File Name"
 msgstr ""
 
-#: edd_s3.php:499
+#: class-edd-amazon-s3.php:443
 msgid "Size"
 msgstr ""
 
-#: edd_s3.php:500
+#: class-edd-amazon-s3.php:444
 msgid "Last Modified"
 msgstr ""
 
-#: edd_s3.php:535
+#: class-edd-amazon-s3.php:479
 msgid "Use File"
 msgstr ""
 
-#: edd_s3.php:545
+#: class-edd-amazon-s3.php:489
 msgid "No files have been uploaded to Amazon S3 yet. Upload one now!"
 msgstr ""
 
-#: edd_s3.php:559
+#: class-edd-amazon-s3.php:503
 msgid "Start Over"
 msgstr ""
 
-#: edd_s3.php:563
+#: class-edd-amazon-s3.php:507
 msgid "View More"
 msgstr ""
 
-#: edd_s3.php:640
+#: class-edd-amazon-s3.php:584
 msgid "N/A"
 msgstr ""
 
-#: edd_s3.php:725
+#: class-edd-amazon-s3.php:669
 msgid "You do not have permission to upload files to S3"
 msgstr ""
 
-#: edd_s3.php:729
+#: class-edd-amazon-s3.php:673
 msgid "Please select a file to upload"
 msgstr ""
 
-#: edd_s3.php:729 edd_s3.php:745
+#: class-edd-amazon-s3.php:673 class-edd-amazon-s3.php:689
 msgid "Error"
 msgstr ""
 
-#: edd_s3.php:745
+#: class-edd-amazon-s3.php:689
 msgid "Something went wrong during the upload process"
 msgstr ""
 
-#: edd_s3.php:969
+#: class-edd-amazon-s3.php:913
 msgid "Amazon S3"
 msgstr ""
 
-#: edd_s3.php:987
+#: class-edd-amazon-s3.php:931
 msgid "<strong>Amazon S3 Settings</strong>"
 msgstr ""
 
-#: edd_s3.php:993
+#: class-edd-amazon-s3.php:937
 msgid "Amazon S3 Access Key ID"
 msgstr ""
 
-#: edd_s3.php:994
+#: class-edd-amazon-s3.php:938
 msgid ""
 "Enter your IAM user&#39;s Access Key ID. See our <a "
 "href=\"http://docs.easydigitaldownloads.com/article/393-amazon-s3-"
 "documentation\">documentation for assistance</a>."
 msgstr ""
 
-#: edd_s3.php:1000
+#: class-edd-amazon-s3.php:944
 msgid "Amazon S3 Secret Key"
 msgstr ""
 
-#: edd_s3.php:1001
+#: class-edd-amazon-s3.php:945
 msgid ""
 "Enter your IAM user&#39;s Secret Key. See our <a "
 "href=\"http://docs.easydigitaldownloads.com/article/393-amazon-s3-"
 "documentation\">documentation for assistance</a>."
 msgstr ""
 
-#: edd_s3.php:1007
+#: class-edd-amazon-s3.php:951
 msgid "Amazon S3 Bucket"
 msgstr ""
 
-#: edd_s3.php:1008
+#: class-edd-amazon-s3.php:952
 msgid ""
 "To create new buckets or get a listing of your current buckets, go to your "
 "<a href=\"%s\">S3 Console</a> (you must be logged in to access the "
@@ -183,37 +177,44 @@ msgid ""
 "default bucket you would like to use here."
 msgstr ""
 
-#: edd_s3.php:1013
+#: class-edd-amazon-s3.php:957
 msgid "Amazon S3 Host"
 msgstr ""
 
-#: edd_s3.php:1014
+#: class-edd-amazon-s3.php:958
 msgid ""
 "Set the host you wish to use. Leave default if you do not know what this is "
 "for"
 msgstr ""
 
-#: edd_s3.php:1020
+#: class-edd-amazon-s3.php:964
 msgid "Link Expiry Time"
 msgstr ""
 
-#: edd_s3.php:1021
+#: class-edd-amazon-s3.php:965
 msgid ""
 "Amazon S3 links expire after a certain amount of time. This default number "
 "of minutes will be used when capturing file downloads, but can be overriden "
 "per file if needed."
 msgstr ""
 
-#: edd_s3.php:1030
+#: class-edd-amazon-s3.php:974
 msgid "Folder Name"
 msgstr ""
 
-#: edd_s3.php:1031
+#: class-edd-amazon-s3.php:975
 msgid "Folder name used when uploading to S3 from FES."
 msgstr ""
 
-#: edd_s3.php:1178
+#: class-edd-amazon-s3.php:1122
 msgid "AWS Error:"
+msgstr ""
+
+#: edd_s3.php:69
+msgid ""
+"Easy Digital Downloads - Amazon S3 requires PHP version 5.5.0 or higher. "
+"Your server is running PHP version %s. Please contact your hosting company "
+"to upgrade your site to 5.5.0 or later."
 msgstr ""
 
 #: includes/class-fes-field.php:155 includes/class-fes-field.php:249
