@@ -1,10 +1,12 @@
 <?php
 
 // Include the AWS SDK using the Composer autoloader.
-if ( ! class_exists( 'Aws\\S3\\S3MultiRegionClient' ) ) {
-	require_once 'aws-sdk/aws-autoloader.php';
+
+if ( ! class_exists( '\\Aws\\S3\\S3Client' ) ) {
+	require_once dirname( __FILE__ ) . '/aws-sdk/aws-autoloader.php';
 }
 
+use Aws\S3\S3Client;
 use Aws\S3\S3MultiRegionClient;
 use Aws\S3\Exception\S3Exception;
 
@@ -102,15 +104,24 @@ final class EDD_Amazon_S3 {
 		$this->load_textdomain();
 		$this->init();
 
-		$this->s3 = new S3MultiRegionClient( array(
-			'version'           => '2006-03-01',
-			'credentials'       => array(
-				'key'    => $this->access_id,
-				'secret' => $this->secret_key,
-			),
-			'signature_version' => 'v4',
-			'scheme'            => is_ssl() ? 'https' : 'http',
-		) );
+		if ( class_exists( '\\Aws\\S3\\S3MultiRegionClient' ) ) {
+			$this->s3 = new S3MultiRegionClient( array(
+				'version'           => '2006-03-01',
+				'credentials'       => array(
+					'key'    => $this->access_id,
+					'secret' => $this->secret_key,
+				),
+				'signature_version' => 'v4',
+				'scheme'            => is_ssl() ? 'https' : 'http',
+			) );
+		} else {
+			$this->s3 = S3Client::factory( array(
+				'credentials' => array(
+					'key'    => $this->access_id,
+					'secret' => $this->secret_key,
+				)
+			) );
+		}
 	}
 
 	/**
@@ -638,16 +649,20 @@ final class EDD_Amazon_S3 {
 			$bucket = $this->bucket;
 		}
 
-		$object_command = $this->s3->getCommand( 'GetObject', array(
-			'Bucket' => $bucket,
-			'Key'    => $filename,
-		) );
+		if ( class_exists( '\\Aws\\S3\\S3MultiRegionClient' ) ) {
+			$object_command = $this->s3->getCommand( 'GetObject', array(
+				'Bucket' => $bucket,
+				'Key'    => $filename,
+			) );
 
-		$request = $this->s3->createPresignedRequest( $object_command, '+' . $expires . ' minutes' );
+			$request = $this->s3->createPresignedRequest( $object_command, '+' . $expires . ' minutes' );
 
-		$url = (string) $request->getUri();
+			$url = (string) $request->getUri();
 
-		return $url;
+			return $url;
+		} else {
+			return $this->s3->getObjectUrl( $bucket, $filename, '+10 minutes' );
+		}
 	}
 
 	/**
