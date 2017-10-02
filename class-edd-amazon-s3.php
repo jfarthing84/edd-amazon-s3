@@ -1,8 +1,8 @@
 <?php
 
 // Include the AWS SDK using the Composer autoloader.
-if ( ! class_exists( 'Aws\\S3\\S3MultiRegionClient' ) ) {
-	require_once 'aws-sdk/aws-autoloader.php';
+if ( ! class_exists( '\\Aws\\S3\\S3MultiRegionClient' ) ) {
+	require_once dirname( __FILE__ ) . '/aws-sdk/aws-autoloader.php';
 }
 
 use Aws\S3\S3MultiRegionClient;
