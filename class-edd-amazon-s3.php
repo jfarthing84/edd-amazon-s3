@@ -1,7 +1,15 @@
 <?php
 
-// Include the AWS SDK using the Composer autoloader
-require dirname( __FILE__ ) . '/vendor/autoload.php';
+/**
+ * Include the AWS SDK using the Composer autoloader only if Aamzon Web Services plugin
+ * is not active.
+ */
+
+if ( is_plugin_active( 'amazon-web-services/amazon-web-services.php' ) ) {
+	require_once dirname( __FILE__ ) . '/../amazon-web-services/vendor/aws/aws-autoloader.php';
+} else {
+	require dirname( __FILE__ ) . '/vendor/autoload.php';
+}
 
 use Aws\S3\S3Client;
 use Aws\S3\S3MultiRegionClient;

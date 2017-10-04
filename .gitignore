@@ -25,6 +25,5 @@ $RECYCLE.BIN/
 
 # Package managers
 /node_modules/
-/vendor/
 composer.lock
 /build/
