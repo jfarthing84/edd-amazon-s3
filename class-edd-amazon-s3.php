@@ -98,7 +98,8 @@ final class EDD_Amazon_S3 {
 		 * Include the AWS SDK using the Composer autoloader only if Amazon Web Services plugin
 		 * is not active.
 		 */
-		if ( class_exists( 'Amazon_Web_Services' ) ) {
+		include_once ABSPATH . '/wp-admin/includes/plugin.php';
+		if ( function_exists( 'is_plugin_active' ) && is_plugin_active( 'amazon-web-services/amazon-web-services.php' ) ) {
 			require_once dirname( __FILE__ ) . '/../amazon-web-services/vendor/aws/aws-autoloader.php';
 		} else {
 			require dirname( __FILE__ ) . '/vendor/autoload.php';
