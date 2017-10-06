@@ -1,20 +1,5 @@
 <?php
 
-/**
- * Include the AWS SDK using the Composer autoloader only if Aamzon Web Services plugin
- * is not active.
- */
-
-if ( is_plugin_active( 'amazon-web-services/amazon-web-services.php' ) ) {
-	require_once dirname( __FILE__ ) . '/../amazon-web-services/vendor/aws/aws-autoloader.php';
-} else {
-	require dirname( __FILE__ ) . '/vendor/autoload.php';
-}
-
-use Aws\S3\S3Client;
-use Aws\S3\S3MultiRegionClient;
-use Aws\S3\Exception\S3Exception;
-
 if ( ! class_exists( 'EDD_Amazon_S3' ) ) :
 
 /**
@@ -109,8 +94,18 @@ final class EDD_Amazon_S3 {
 		$this->load_textdomain();
 		$this->init();
 
+		/**
+		 * Include the AWS SDK using the Composer autoloader only if Amazon Web Services plugin
+		 * is not active.
+		 */
+		if ( class_exists( 'Amazon_Web_Services' ) ) {
+			require_once dirname( __FILE__ ) . '/../amazon-web-services/vendor/aws/aws-autoloader.php';
+		} else {
+			require dirname( __FILE__ ) . '/vendor/autoload.php';
+		}
+
 		if ( class_exists( '\\Aws\\S3\\S3MultiRegionClient' ) ) {
-			$this->s3 = new S3MultiRegionClient( array(
+			$this->s3 = new Aws\S3\S3MultiRegionClient( array(
 				'version'           => '2006-03-01',
 				'credentials'       => array(
 					'key'    => $this->access_id,
@@ -120,7 +115,7 @@ final class EDD_Amazon_S3 {
 				'scheme'            => is_ssl() ? 'https' : 'http',
 			) );
 		} else {
-			$this->s3 = S3Client::factory( array(
+			$this->s3 = Aws\S3\S3Client::factory( array(
 				'credentials' => array(
 					'key'    => $this->access_id,
 					'secret' => $this->secret_key,
