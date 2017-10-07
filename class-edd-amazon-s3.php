@@ -463,7 +463,7 @@ final class EDD_Amazon_S3 {
 						echo '<tbody>';
 
 						foreach ( $files as $key => $file ) {
-							if( $file['name'][ strlen( $file['name'] ) - 1 ] === '/' ) {
+							if( $file['name'][ strlen( $file['name'] ) - 1 ] === '/' || 'NextMarker' == $key ) {
 								continue; // Don't show folders
 							}
 
@@ -515,7 +515,11 @@ final class EDD_Amazon_S3 {
 							echo '<a class="button-secondary prev" href="' . esc_url( remove_query_arg( 'p', $base ) ) . '">' . __( 'Start Over', 'edd_s3' ) . '</a>';
 						}
 
-						if ( $i >= 29 ) {
+						if ( isset( $files['NextMarker'] ) ) {
+							$last_file = $files['NextMarker'];
+						}
+
+						if ( $i >= 29 || isset( $files['NextMarker'] ) ) {
 							echo '<a class="button-secondary next" href="' . esc_url( add_query_arg( array( 'p' => $page + 1, 'start' => $last_file ), $base ) ) . '">' . __( 'View More', 'edd_s3' ) . '</a>';
 						}
 					echo '</div>';
@@ -598,12 +602,11 @@ final class EDD_Amazon_S3 {
 				}
 			}
 
-			if ( isset( $files['IsTruncated'] ) && ! $files['IsTruncated'] ) {
+			if ( isset( $files['IsTruncated'] ) && false == $files['IsTruncated'] ) {
 				return $results;
-			}
-
-			if ( isset( $files['NextMarker'] ) ) {
-				$nextMarker = $files['NextMarker'];
+			} elseif ( isset( $files['IsTruncated'] ) && true == $files['IsTruncated'] ) {
+				$last_file = end( $files['Contents'] );
+				$results['NextMarker'] = $last_file['Key'];
 			}
 
 			return $results;
