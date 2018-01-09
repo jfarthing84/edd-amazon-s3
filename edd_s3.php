@@ -50,7 +50,7 @@ function edd_amazon_s3() {
 	}
 
 	// Fix plugin conflict with BackupBuddy
-	if ( wp_doing_cron() && ( did_action( 'backupbuddy_cron' ) || has_action( 'backupbuddy_cron' ) ) ) {
+	if ( wp_doing_cron() && ( did_action( 'backupbuddy_cron' ) || has_action( 'backupbuddy_cron' ) || doing_action( 'backupbuddy_cron' ) ) ) {
 		return;
 	}
 
