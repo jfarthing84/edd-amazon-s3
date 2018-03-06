@@ -174,8 +174,12 @@ final class EDD_Amazon_S3 {
 		add_action( 'admin_head', array( $this, 'admin_js' ) );
 		add_action( 'admin_notices', array( $this, 'show_admin_notices' ), 10 );
 
+		$uri = ltrim( $_SERVER[ 'REQUEST_URI' ], '/' );
+		if ( is_admin() && false === strpos( $uri, 'wp_scrape_key' ) ) {
+			add_filter( 'edd_start_session', '__return_true' );
+		}
+
 		// Adds Media Tab
-		add_filter( 'edd_start_session', '__return_true' );
 		add_filter( 'media_upload_tabs', array( $this, 's3_tabs' ) );
 		add_action( 'media_upload_s3', array( $this, 's3_upload_iframe' ) );
 		add_action( 'media_upload_s3_library', array( $this, 's3_library_iframe' ) );
