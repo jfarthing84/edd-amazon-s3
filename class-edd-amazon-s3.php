@@ -167,17 +167,13 @@ final class EDD_Amazon_S3 {
 	 * @return void
 	 */
 	private function init() {
+
 		if ( class_exists( 'EDD_License' ) ) {
 			$edds3_license = new EDD_License( __FILE__, EDD_AS3_SL_PRODUCT_NAME, EDD_AS3_VERSION, 'Pippin Williamson', 'edd_amazon_s3_license_key' );
 		}
 
 		add_action( 'admin_head', array( $this, 'admin_js' ) );
 		add_action( 'admin_notices', array( $this, 'show_admin_notices' ), 10 );
-
-		$uri = ltrim( $_SERVER[ 'REQUEST_URI' ], '/' );
-		if ( is_admin() && false === strpos( $uri, 'wp_scrape_key' ) ) {
-			add_filter( 'edd_start_session', '__return_true' );
-		}
 
 		// Adds Media Tab
 		add_filter( 'media_upload_tabs', array( $this, 's3_tabs' ) );
@@ -269,8 +265,9 @@ final class EDD_Amazon_S3 {
 		<script>
 			jQuery( document ).ready( function( $ ) {
 				$( '.edd-s3-insert' ).click( function() {
-					var file = "<?php echo EDD()->session->get( 's3_file_name' ); ?>";
-					var bucket = "<?php echo EDD()->session->get( 's3_file_bucket' ); ?>";
+					var file = $(this).data( 's3-file' );
+					var bucket = $(this).data( 's3-bucket' );
+
 					$( parent.window.edd_filename ).val( file );
 					$( parent.window.edd_fileurl ).val( bucket + '/' + file );
 					parent.window.tb_remove();
@@ -318,7 +315,9 @@ final class EDD_Amazon_S3 {
 				</p>
 				<?php
 				if ( ! empty( $_GET['s3_success'] ) && '1' == $_GET['s3_success'] ) {
-					echo '<div class="edd_errors"><p class="edd_success">' . sprintf( __( 'Success! <a href="#" class="edd-s3-insert">Insert uploaded file into %s</a>.', 'edd_s3' ), edd_get_label_singular() ) . '</p></div>';
+					$s3_file   = sanitize_text_field( $_GET['s3_file'] );
+					$s3_bucket = sanitize_text_field( $_GET['s3_bucket'] );
+					echo '<div class="edd_errors"><p class="edd_success">' . sprintf( __( 'Success! <a href="#" class="edd-s3-insert" data-s3-file="%s" data-s3-bucket="%s">Insert uploaded file into %s</a>.', 'edd_s3' ), $s3_file, $s3_bucket, edd_get_label_singular() ) . '</p></div>';
 				}
 				?>
 			</form>
@@ -705,9 +704,7 @@ final class EDD_Amazon_S3 {
 		);
 
 		if ( $this->upload_file( $file ) ) {
-			EDD()->session->set( 's3_file_name', $file['name'] );
-			EDD()->session->set( 's3_file_bucket', $file['bucket'] );
-			wp_safe_redirect( add_query_arg( 's3_success', '1', $_SERVER['HTTP_REFERER'] ) );
+			wp_safe_redirect( add_query_arg( array( 's3_success' => '1', 's3_file' => $file['name'], 's3_bucket' => $file['bucket'] ), $_SERVER['HTTP_REFERER'] ) );
 			exit;
 		} else {
 			wp_die( __( 'Something went wrong during the upload process', 'edd_s3' ), __( 'Error', 'edd_s3' ), array( 'back_link' => true ) );
