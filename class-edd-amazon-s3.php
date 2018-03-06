@@ -175,6 +175,7 @@ final class EDD_Amazon_S3 {
 		add_action( 'admin_notices', array( $this, 'show_admin_notices' ), 10 );
 
 		// Adds Media Tab
+		add_filter( 'edd_start_session', '__return_true' );
 		add_filter( 'media_upload_tabs', array( $this, 's3_tabs' ) );
 		add_action( 'media_upload_s3', array( $this, 's3_upload_iframe' ) );
 		add_action( 'media_upload_s3_library', array( $this, 's3_library_iframe' ) );
