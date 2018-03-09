@@ -206,6 +206,9 @@ final class EDD_Amazon_S3 {
 			'send_cfm_files_to_s3',
 		), 10, 2 );
 		add_filter( 'cfm_file_download_url', array( $this, 'file_download_url' ), 10, 1 );
+
+		// Software Licensing fix
+		add_action( 'edd_sl_before_package_download', array( $this, 'edd_sl_set_download_method' ), 10, 4 );
 	}
 
 	public function show_admin_notices() {
@@ -807,6 +810,17 @@ final class EDD_Amazon_S3 {
 	 */
 	public function generate_url( $file, $download_files, $file_key ) {
 		$file_data = $download_files[ $file_key ];
+
+		if ( ! array_key_exists( $file_key, $download_files ) ) {
+			return $file;
+		}
+
+		$file_data = $download_files[ $file_key ];
+
+		if ( empty( $file_data['file'] ) ) {
+			return $file;
+		}
+
 		$file_name = $file_data['file'];
 
 		// Check whether this is an Amazon S3 file or not.
@@ -851,12 +865,36 @@ final class EDD_Amazon_S3 {
 	}
 
 	/**
+	 * Capability for setting the redirect method with the Software Licensing toknized URLs
+	 *
+	 * @since  2.3.10
+	 * @param  int $id         The Download ID
+	 * @param  string $hash    The Hash passed to SL
+	 * @param  string $license The License ID requesting the update package
+	 * @param  int    $expires The expiration of the link
+	 * @return void
+	 */
+	public function edd_sl_set_download_method( $id, $hash, $license, $expires ) {
+			$license_id = edd_software_licensing()->get_license_by_key( $license );
+			$price_id   = edd_software_licensing()->get_price_id( $license_id );
+
+			if( $this->is_s3_download( $id, $price_id ) ) {
+
+					add_filter( 'edd_file_download_method', array( $this, 'set_download_method' ) );
+
+				}
+
+	}
+
+	/**
 	 * Change download method to "redirect".
 	 *
 	 * @access public
 	 * @since  1.0
 	 *
 	 * @param string $method Download method.
+	 *
+	 * @return string $method The redirect method forced.
 	 */
 	public function set_download_method( $method ) {
 		return 'redirect';
