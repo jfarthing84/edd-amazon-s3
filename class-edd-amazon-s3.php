@@ -875,14 +875,14 @@ final class EDD_Amazon_S3 {
 	 * @return void
 	 */
 	public function edd_sl_set_download_method( $id, $hash, $license, $expires ) {
-			$license_id = edd_software_licensing()->get_license_by_key( $license );
-			$price_id   = edd_software_licensing()->get_price_id( $license_id );
+		$license_id = edd_software_licensing()->get_license_by_key( $license );
+		$price_id   = edd_software_licensing()->get_price_id( $license_id );
 
-			if( $this->is_s3_download( $id, $price_id ) ) {
+		if( $this->is_s3_download( $id, $price_id ) ) {
 
-					add_filter( 'edd_file_download_method', array( $this, 'set_download_method' ) );
+			add_filter( 'edd_file_download_method', array( $this, 'set_download_method' ) );
 
-				}
+		}
 
 	}
 
