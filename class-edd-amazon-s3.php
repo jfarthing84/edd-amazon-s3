@@ -899,6 +899,11 @@ final class EDD_Amazon_S3 {
 	 * @return boolean            If the file passed is an S3 file or a local/url
 	 */
 	public function is_s3_file( $file_name ) {
+
+		if ( empty( $file_name ) ) {
+			return false;
+		}
+
 		return ( '/' !== $file_name[0] && strpos( $file_name, 'http://' ) === false && strpos( $file_name, 'https://' ) === false && strpos( $file_name, 'ftp://' ) === false ) || false !== ( strpos( $file_name, 'AWSAccessKeyId' ) );
 	}
 
