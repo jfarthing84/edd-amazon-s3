@@ -900,8 +900,10 @@ final class EDD_Amazon_S3 {
 	 */
 	public function is_s3_file( $file_name ) {
 
-		if ($file_name == '') return false;
-		
+		if ( empty( $file_name ) ) {
+			return false;
+		}
+
 		return ( '/' !== $file_name[0] && strpos( $file_name, 'http://' ) === false && strpos( $file_name, 'https://' ) === false && strpos( $file_name, 'ftp://' ) === false ) || false !== ( strpos( $file_name, 'AWSAccessKeyId' ) );
 	}
 
