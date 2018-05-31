@@ -112,6 +112,7 @@ final class EDD_Amazon_S3 {
 					'key'    => $this->access_id,
 					'secret' => $this->secret_key,
 				),
+				'endpoint' => $this->get_host(),
 				'signature_version' => 'v4',
 				'scheme'            => is_ssl() ? 'https' : 'http',
 			) );
@@ -120,7 +121,8 @@ final class EDD_Amazon_S3 {
 				'credentials' => array(
 					'key'    => $this->access_id,
 					'secret' => $this->secret_key,
-				)
+				),
+				'endpoint' => $this->get_host()
 			) );
 		}
 	}
@@ -773,7 +775,7 @@ final class EDD_Amazon_S3 {
 	public function get_host() {
 		global $edd_options;
 
-		return ! empty( $edd_options['edd_amazon_s3_host'] ) ? trim( $edd_options['edd_amazon_s3_host'] ) : 's3.amazonaws.com';
+		return ! empty( $edd_options['edd_amazon_s3_host'] ) ? trim( $edd_options['edd_amazon_s3_host'] ) : ( is_ssl() ? 'https' : 'http' ) . '://s3.amazonaws.com';
 	}
 
 	/**
